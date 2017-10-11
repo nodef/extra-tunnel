@@ -3,6 +3,7 @@ const net = require('net');
 
 // 1. global variables
 const E = process.env;
+const BUFFER_EMPTY = Buffer.alloc(0);
 const TOKEN_LEN = Buffer.byteLength(E.TOKEN, 'utf8');
 const server = net.createServer();
 const members = new Map();
