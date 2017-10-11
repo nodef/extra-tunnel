@@ -1,11 +1,14 @@
 'use strict';
 const net = require('net');
 
+// 1. global variables
 const E = process.env;
+const TOKEN_LEN = Buffer.byteLength(E.TOKEN, 'utf8');
 const server = net.createServer();
 const members = new Map();
 const clients = new Set();
 server.listen(E.PORT);
+
 
 function packetRead(bufs, size) {
   // 1. is packet available?
