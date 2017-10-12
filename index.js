@@ -82,7 +82,7 @@ server.on('connection', (soc) => {
 
   // 3. register member
   members.add(id, soc);
-  clientsWrite({'event': 'connection', 'id':, id});
+  clientsWrite({'event': 'connection', 'id': id});
   // 4. handle events
   soc.on('data', (buf) => {
     // a. update buffers
