@@ -12,6 +12,7 @@ server.listen(E.PORT);
 var con = 0;
 
 function packetRead(bufs, size) {
+  console.log('packetRead');
   // 1. is packet available?
   const psz = bufs[0].readInt32BE(0);
   if(psz>size) return null;
@@ -28,6 +29,7 @@ function packetRead(bufs, size) {
 };
 
 function packetWrite(head, body) {
+  console.log('packetWrite');
   // 1. some defaults
   head = head||{};
   body = body||BUFFER_EMPTY;
@@ -44,12 +46,14 @@ function packetWrite(head, body) {
 };
 
 function memberWrite(id, head, body) {
+  console.log('memberWrite');
   // 1. write packet to a member
   const soc = members.get(id);
   soc.write(clients.has(id)? packetWrite(head, body) : body);
 };
 
 function clientsWrite(head, body) {
+  console.log('clientsWrite');
   // 1. write packet to all clients
   const buf = packetWrite(head, body);
   for(var id of clients)
@@ -57,12 +61,14 @@ function clientsWrite(head, body) {
 };
 
 server.on('connection', (soc) => {
+  console.log('connection');
   // 1. connection data
   const id = con++;
   const bufs = [];
   var size = 0, old = false;
 
   function handleToken() {
+    console.log('handleToken');
     // 1. if valid token, add client
     if(bufs[0].toString('utf8', 0, TOKEN_LEN)!==E.TOKEN) return;
     clientsWrite({'event': 'client', 'id': id});
@@ -72,6 +78,7 @@ server.on('connection', (soc) => {
   };
 
   function handleClient() {
+    console.log('handleClient');
     // 1. write packets to members
     var p = null;
     while(p = packetRead(bufs, size)) {
@@ -85,6 +92,7 @@ server.on('connection', (soc) => {
   clientsWrite({'event': 'connection', 'id': id});
   // 4. handle events
   soc.on('data', (buf) => {
+    console.log('data');
     // a. update buffers
     size += buf.length;
     bufs.push(buf);
@@ -96,15 +104,20 @@ server.on('connection', (soc) => {
   });
   // 5. on close remove member
   soc.on('close', () => {
+    console.log('close');
     clients.remove(id);
     members.delete(id);
     clientsWrite({'event': 'close', 'id': id});
   });
   // 6. handle error
-  soc.on('error', (err) => console.error(err));
+  soc.on('error', (err) => {
+    console.log('error:connection');
+    console.error(err)
+  });
 });
 
 server.on('error', (err) => {
+  console.log('error:server');
   // 1. server must be closed on error
   console.error(err);
   server.close();
