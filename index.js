@@ -106,7 +106,7 @@ server.on('connection', (soc) => {
   // 5. on close remove member
   soc.on('close', () => {
     console.log('close');
-    clients.remove(id);
+    clients.delete(id);
     members.delete(id);
     clientsWrite({'event': 'close', 'id': id});
   });
