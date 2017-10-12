@@ -81,7 +81,7 @@ server.on('connection', (soc) => {
   };
 
   // 3. register member
-  members.add(id, soc);
+  members.set(id, soc);
   clientsWrite({'event': 'connection', 'id': id});
   // 4. handle events
   soc.on('data', (buf) => {
@@ -94,11 +94,18 @@ server.on('connection', (soc) => {
     else clientsWrite({'event': 'data', 'id': id}, buf);
     old = true;
   });
-  soc.on('close', () => clientsWrite({'event': 'close', 'id': id}));
+  // 5. on close remove member
+  soc.on('close', () => {
+    clients.remove(id);
+    members.delete(id);
+    clientsWrite({'event': 'close', 'id': id});
+  });
+  // 6. handle error
   soc.on('error', (err) => console.error(err));
 });
 
 server.on('error', (err) => {
+  // 1. server must be closed on error
   console.error(err);
   server.close();
 });
