@@ -12,7 +12,7 @@ server.listen(E.PORT);
 var con = 0;
 
 function packetRead(bufs, size) {
-  console.log('packetRead');
+  console.log('packetRead', bufs, size);
   // 1. is packet available?
   const psz = bufs[0].readInt32BE(0);
   if(psz>size) return null;
@@ -25,11 +25,12 @@ function packetRead(bufs, size) {
   // 3. update buffers
   bufs.length = 0;
   bufs.push(buf.slice(psz));
+  console.log('-> ', head, body, psz);
   return {head, body, 'size': psz};
 };
 
 function packetWrite(head, body) {
-  console.log('packetWrite');
+  console.log('packetWrite', head, body);
   // 1. some defaults
   head = head||{};
   body = body||BUFFER_EMPTY;
@@ -46,14 +47,14 @@ function packetWrite(head, body) {
 };
 
 function memberWrite(id, head, body) {
-  console.log('memberWrite');
+  console.log('memberWrite', id, head, body);
   // 1. write packet to a member
   const soc = members.get(id);
   soc.write(clients.has(id)? packetWrite(head, body) : body);
 };
 
 function clientsWrite(head, body) {
-  console.log('clientsWrite');
+  console.log('clientsWrite', head, body);
   // 1. write packet to all clients
   const buf = packetWrite(head, body);
   for(var id of clients)
