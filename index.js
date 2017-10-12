@@ -9,7 +9,7 @@ const server = net.createServer();
 const members = new Map();
 const clients = new Set();
 server.listen(E.PORT);
-
+var con = 0;
 
 function packetRead(bufs, size) {
   // 1. is packet available?

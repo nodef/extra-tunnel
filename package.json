@@ -1,6 +1,6 @@
 {
   "name": "rproxy",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Reverse HTTP Server and Client for hosting Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
