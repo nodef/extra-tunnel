@@ -14,6 +14,7 @@ var con = 0;
 function packetRead(bufs, size) {
   console.log('packetRead', bufs, size);
   // 1. is packet available?
+  if(size<4) return;
   const psz = bufs[0].readInt32BE(0);
   if(psz>size) return null;
   // 2. read [total size][head size][head][body]
