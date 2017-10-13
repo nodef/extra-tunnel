@@ -11,21 +11,28 @@ const clients = new Set();
 server.listen(E.PORT);
 var con = 0;
 
+function buffersConcat(bufs) {
+  // 1. concat buffers into one
+  const buf = bufs.length>1? Buffer.concat(bufs) : bufs[0];
+  bufs.length = 0;
+  bufs.push(buf);
+  return buf;
+};
+
 function packetRead(bufs, size) {
   console.log('packetRead', bufs, size);
   // 1. is packet available?
   if(size<4) return;
+  if(bufs[0].length<4) buffersConcat(bufs);
   const psz = bufs[0].readInt32BE(0);
   if(psz>size) return null;
   // 2. read [total size][head size][head][body]
-  const buf = bufs.length>1? Buffer.concat(bufs, size) : bufs[0];
+  const buf = buffersConcat(bufs);
   const hsz = buf.readInt32BE(4);
   const hst = buf.toString('utf8', 4+4, 4+4+hsz);
   const body = buf.slice(4+4+hsz, psz);
   const head = JSON.parse(hst);
-  // 3. update buffers
-  bufs.length = 0;
-  bufs.push(buf.slice(psz));
+  bufs[0] = buf.slice(psz);
   console.log('-> ', head, body, psz);
   return {head, body, 'size': psz};
 };
