@@ -80,6 +80,7 @@ server.on('connection', (soc) => {
     console.log('handleToken');
     // 1. if valid token, add client
     if(bufs[0].toString('utf8', 0, TOKEN_LEN)!==E.TOKEN) return;
+    console.log('token matched! adding client');
     clientsWrite({'event': 'client', 'id': id});
     bufs[0] = bufs[0].slice(TOKEN_LEN);
     size -= TOKEN_LEN;
