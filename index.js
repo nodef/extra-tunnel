@@ -23,3 +23,4 @@ server.listen(E.PORT||80);
 // - HTTP Connect
 // - HTTP GET Direct
 // - HTTP GET Indirect
+// - HTTP WebSocket
