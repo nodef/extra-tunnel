@@ -114,7 +114,6 @@ const Server = function(opt) {
     clients.add(id);
     clientsWrite({'event': 'client', 'id': id});
     const end = req.indexOf('\r\n\r\n')+4;
-    console.log(req, end);
     return Buffer.byteLength(req.substring(0, end), 'utf8');
   };
 
