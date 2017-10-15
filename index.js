@@ -86,6 +86,18 @@ const Server = function(opt) {
     soc.write(clients.has(id)? packetWrite(head, body) : body);
   };
 
+  function memberClose(id, wrt) {
+    // 1. close member if exists
+    var soc = members.get(id);
+    if(!soc) return false;
+    console.log(`Member ${id} close`);
+    if(wrt) clientsWrite({'event': 'close', 'id': id});
+    clients.delete(id);
+    members.delete(id);
+    soc.destory();
+    return true;
+  };
+
   function clientsWrite(head, body) {
     console.log('clientsWrite', head, body? body.toString() : body)
     // 1. write packet to all clients
@@ -113,7 +125,7 @@ const Server = function(opt) {
     while(p = packetRead(bufs, size)) {
       var h = p.head;
       if(h.event==='data') memberWrite(h.id, {'event': 'data', 'id': id}, p.body);
-      else if(h.event==='close' && !clients.has(h.id)) members.get(h.id).destroy();
+      else if(h.event==='close' && !clients.has(h.id)) memberClose(h.id, false);
       size -= p.size;
     }
     return size;
@@ -141,16 +153,9 @@ const Server = function(opt) {
       else clientsWrite({'event': 'data', 'id': id}, buf);
     });
     // 4. on close, delete member and inform
-    soc.on('close', () => {
-      console.log(`Member ${id} close.`);
-      clients.delete(id);
-      members.delete(id);
-      clientsWrite({'event': 'close', 'id': id});
-    });
+    soc.on('close', () => memberClose(id, true));
     // 5. on error, report
-    soc.on('error', (err) => {
-      console.error(`Member ${id} error: `, err);
-    });
+    soc.on('error', (err) => console.error(`Member ${id} error: `, err));
   });
   server.on('error', (err) => {
     // 1. close server on error
@@ -173,6 +178,17 @@ const Client = function(opt) {
     client.write(buf);
   };
 
+  function memberClose(id, wrt) {
+    // 1. close member if exists
+    var soc = members.get(id);
+    if(!soc) return false;
+    console.log(`Member ${id} close`);
+    if(wrt) clientWrite({'event': 'close', 'id': id});
+    members.delete(id);
+    soc.destory();
+    return true;
+  };
+
   function memberConnect(id) {
     console.log(`Member ${id} connection.`);
     console.log(opt.mport, opt.mhost);
@@ -188,15 +204,9 @@ const Client = function(opt) {
       clientWrite({'event': 'data', 'id': id}, buf);
     });
     // 4. on close, delete member and inform server
-    soc.on('close', () => {
-      console.log(`Member ${id} close.`);
-      clientWrite({'event': 'close', 'id': id});
-      members.delete(id);
-    });
+    soc.on('close', () => memberClose(id, true));
     // 5. on error, log error
-    soc.on('error', () => {
-      console.error(`Member ${id} error.`);
-    });
+    soc.on('error', () => console.error(`Member ${id} error.`));
   };
 
   function handleToken(buf) {
@@ -225,7 +235,7 @@ const Client = function(opt) {
       const h = p.head;
       if(h.event==='connection') memberConnect(h.id);
       else if(h.event==='data') members.get(h.id).write(p.body);
-      else if(h.event==='close') members.get(h.id).destroy();
+      else if(h.event==='close') memberClose(h.id);
       size -= p.size;
     }
     return size;
