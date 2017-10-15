@@ -111,6 +111,7 @@ const Server = function(opt) {
     var size = 0, gtok = true;
 
     // 2. register member
+    console.log(`Member ${id} connection.`);
     members.set(id, soc);
     clientsWrite({'event': 'connection', 'id': id});
     // 3. on data, process
