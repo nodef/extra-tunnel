@@ -189,7 +189,6 @@ const Client = function(opt) {
 
   function memberConnect(id) {
     console.log(`Member ${id} connection.`);
-    console.log(opt.mport, opt.mhost);
     // 1. connect to target
     const soc = net.createConnection(opt.mport, opt.mhost);
     members.set(id, soc);
