@@ -291,6 +291,6 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else if(A[i]==='--url' || A[i]==='-u') o.url = A[++i];
   }
-  if(mode.toLowerCase()==='server') return new Server(o);
+  if(o.mode.toLowerCase()==='server') return new Server(o);
   else return new Client(o);
 };
