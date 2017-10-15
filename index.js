@@ -78,6 +78,9 @@ const Server = function(opt) {
   const members = new Map();
   const clients = new Set();
   server.listen(opt.port||80);
+  setInterval(() => {
+    clientsWrite({'event': 'ping'});
+  }, opt.ping||8000);
   var ids = 0;
 
   function memberWrite(id, head, body) {
@@ -236,6 +239,7 @@ const Client = function(opt) {
       if(h.event==='connection') memberConnect(h.id);
       else if(h.event==='data') members.get(h.id).write(p.body);
       else if(h.event==='close') memberClose(h.id);
+      else if(h.event==='ping') clientWrite({'event': 'pong'});
       size -= p.size;
     }
     return size;
