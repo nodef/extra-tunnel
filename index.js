@@ -92,9 +92,9 @@ const Server = function(opt) {
     if(!soc) return false;
     console.log(`Member ${id} close`);
     if(wrt) clientsWrite({'event': 'close', 'id': id});
+    if(!soc.destroyed) soc.destroy();
     clients.delete(id);
     members.delete(id);
-    soc.destroy();
     return true;
   };
 
@@ -182,8 +182,8 @@ const Client = function(opt) {
     if(!soc) return false;
     console.log(`Member ${id} close`);
     if(wrt) clientWrite({'event': 'close', 'id': id});
+    if(!soc.destroyed) soc.destroy();
     members.delete(id);
-    soc.destroy();
     return true;
   };
 
