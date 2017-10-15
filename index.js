@@ -261,7 +261,7 @@ const Client = function(opt) {
   // 3. on close, close members
   client.on('close', () => {
     console.log(`Client ${id} close.`);
-    for(var [id, soc] of members)
+    for(var [i, soc] of members)
       soc.destroy();
   });
   // 4. on error, report
