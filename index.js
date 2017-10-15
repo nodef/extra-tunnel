@@ -50,12 +50,12 @@ function packetRead(bufs, size) {
   const body = buf.slice(4+4+hsz, psz);
   const head = JSON.parse(hst);
   bufs[0] = buf.slice(psz);
-  console.log('->', head, body, psz);
+  console.log('->', head, (body||BUFFER_EMPTY).toString(), psz);
   return {head, body, 'size': psz};
 };
 
 function packetWrite(head, body) {
-  console.log('packetWrite', head, body);
+  console.log('packetWrite', head, (body||BUFFER_EMPTY).toString());
   // 1. some defaults
   head = head||{};
   body = body||BUFFER_EMPTY;
@@ -113,7 +113,7 @@ const Server = function(opt) {
     while(p = packetRead(bufs, size)) {
       var h = p.head;
       if(h.event==='data') memberWrite(h.id, {'event': 'data', 'id': id}, p.body);
-      else if(h.event==='close' && !client.has(h.id)) members.get(h.id).destroy();
+      else if(h.event==='close' && !clients.has(h.id)) members.get(h.id).destroy();
       size -= p.size;
     }
     return size;
@@ -174,12 +174,14 @@ const Client = function(opt) {
   };
 
   function memberConnect(id) {
+    console.log(`Member ${id} connection.`);
+    console.log(opt.mport, opt.mhost);
     // 1. connect to target
     const soc = net.createConnection(opt.mport, opt.mhost);
+    members.set(id, soc);
     // 2. on connect, add as member
     soc.on('connect', () => {
       console.log(`Member ${id} connect.`);
-      members.set(id, soc);
     });
     // 3. on data, inform server
     soc.on('data', (buf) => {
@@ -212,6 +214,7 @@ const Client = function(opt) {
     const p = packetRead(bufs, size);
     if(!p) return 0;
     id = p.head.id;
+    console.log(`Client ${id}.`);
     return size-p.size;
   };
 
