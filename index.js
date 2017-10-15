@@ -273,30 +273,24 @@ const Client = function(opt) {
 // 2. setup exports, commandline
 module.exports = {Server, Client};
 if(require.main===module) {
-  var mode = E.MODE||'';
-  var host = E.HOST||'localhost';
-  var port = E.PORT||'80';
-  var mhost = E.SHOST||'localhost';
-  var mport = E.SPORT||'80';
-  var token = E.TOKEN||'12345678';
-  var url = E.URL||'/';
-  for(var i=2, I=A.length; i<I; i++) {
-    if(A[i]==='--mode' || A[i]==='-m') mode = A[++i];
-    else if(A[i]==='--host' || A[i]==='-h') host = A[++i];
-    else if(A[i]==='--port' || A[i]==='-p') port = A[++i];
-    else if(A[i]==='--mhost' || A[i]==='-i') mhost = A[++i];
-    else if(A[i]==='--mport' || A[i]==='-q') mport = A[++i];
-    else if(A[i]==='--token' || A[i]==='-t') token = A[++i];
-    else if(A[i]==='--url' || A[i]==='-u') url = A[++i];
-  }
-  var opt = {
-    'host': host,
-    'port': parseInt(port),
-    'mhost': mhost,
-    'mport': parseInt(mport),
-    'token': token,
-    'url': url
+  var o = {
+    'mode': E.MODE||'',
+    'host': E.HOST||'localhost',
+    'port': parseInt(E.PORT||'80'),
+    'mhost': E.SHOST||'localhost',
+    'mport': parseInt(E.SPORT||'80'),
+    'token': E.TOKEN||'12345678',
+    'url': E.URL||'/'
   };
-  if(mode.toLowerCase()==='server') return new Server(opt);
-  else return new Client(opt);
+  for(var i=2, I=A.length; i<I; i++) {
+    if(A[i]==='--mode' || A[i]==='-m') o.mode = A[++i];
+    else if(A[i]==='--host' || A[i]==='-h') o.host = A[++i];
+    else if(A[i]==='--port' || A[i]==='-p') o.port = parseInt(A[++i]);
+    else if(A[i]==='--mhost' || A[i]==='-i') o.mhost = A[++i];
+    else if(A[i]==='--mport' || A[i]==='-q') o.mport = parseInt(A[++i]);
+    else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
+    else if(A[i]==='--url' || A[i]==='-u') o.url = A[++i];
+  }
+  if(mode.toLowerCase()==='server') return new Server(o);
+  else return new Client(o);
 };
