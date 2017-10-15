@@ -11,14 +11,12 @@ const tokenFn = (opt) => (
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
-  'Authorization: Basic '+opt.token+'\r\n'+
-  '\r\n'
+  'Authorization: Basic '+opt.token+'\r\n'
 );
 const tokenResFn = () => (
   'HTTP/1.1 101 Switching Protocols\r\n'+
   'Upgrade: tcp\r\n'+
-  'Connection: Upgrade\r\n'+
-  '\r\n'
+  'Connection: Upgrade\r\n'
 );
 
 function buffersConcat(bufs) {
@@ -89,7 +87,7 @@ const Server = function(opt) {
     // 1. verify token, if valid send response
     if(!buf.toString().startsWith(TOKEN)) return 0;
     console.log(`Client ${id}.`);
-    members.get(id).write(TOKEN_RES);
+    members.get(id).write(TOKEN_RES+'\r\n');
     clients.add(id);
     clientsWrite({'event': 'client', 'id': id});
     return TOKEN_LEN;
@@ -151,7 +149,7 @@ const Client = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
   const TOKEN_RES_LEN = Buffer.byteLength(TOKEN_RES, 'utf8');
-  const client = net.createConnection(opt.sport, opt.shost);
+  const client = net.createConnection(opt.port, opt.host);
   const members = new Map();
   const bufs = [];
   var id = 0, size = 0, gtok = true;
@@ -164,7 +162,7 @@ const Client = function(opt) {
 
   function memberConnect(id) {
     // 1. connect to target
-    const soc = net.createConnection(opt.port, opt.host);
+    const soc = net.createConnection(opt.mport, opt.mhost);
     // 2. on connect, add as member
     soc.on('connect', () => {
       console.log(`Member ${id} connect.`);
@@ -215,7 +213,9 @@ const Client = function(opt) {
   };
   // 1. on connect, send token
   client.on('connect', () => {
-    client.write(TOKEN);
+    console.log(`Client ? connect.`);
+    console.log(TOKEN.toString());
+    client.write(TOKEN+'\r\n');
   });
   // 2. on data, process
   client.on('data', (buf) => {
@@ -248,24 +248,24 @@ if(require.main===module) {
   var mode = E.MODE||'';
   var host = E.HOST||'localhost';
   var port = E.PORT||'80';
-  var shost = E.SHOST||'localhost';
-  var sport = E.SPORT||'80';
+  var mhost = E.SHOST||'localhost';
+  var mport = E.SPORT||'80';
   var token = E.TOKEN||'12345678';
   var url = E.URL||'/';
   for(var i=2, I=A.length; i<I; i++) {
     if(A[i]==='--mode' || A[i]==='-m') mode = A[++i];
     else if(A[i]==='--host' || A[i]==='-h') host = A[++i];
     else if(A[i]==='--port' || A[i]==='-p') port = A[++i];
-    else if(A[i]==='--shost' || A[i]==='-i') shost = A[++i];
-    else if(A[i]==='--sport' || A[i]==='-q') sport = A[++i];
+    else if(A[i]==='--mhost' || A[i]==='-i') mhost = A[++i];
+    else if(A[i]==='--mport' || A[i]==='-q') mport = A[++i];
     else if(A[i]==='--token' || A[i]==='-t') token = A[++i];
     else if(A[i]==='--url' || A[i]==='-u') url = A[++i];
   }
   var opt = {
     'host': host,
     'port': parseInt(port),
-    'shost': shost,
-    'sport': parseInt(sport),
+    'mhost': mhost,
+    'mport': parseInt(mport),
     'token': token,
     'url': url
   };
