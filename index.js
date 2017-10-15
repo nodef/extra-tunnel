@@ -9,6 +9,8 @@ const tokenFn = (opt) => (
   'GET '+opt.url+' HTTP/1.1\r\n'+
   'Host: '+opt.host+'\r\n'+
   'Upgrade: tcp\r\n'+
+  'Connection: Upgrade\r\n'+
+  'Origin: http://'+opt.host+'\r\n'+
   'Authorization: Basic '+opt.token+'\r\n'+
   '\r\n'
 );
