@@ -209,12 +209,10 @@ const Client = function(opt) {
   };
 
   function handleToken(buf) {
-    console.log(buf.toString());
     const req = buf.toString();
     if(!stringIncludesAll(req, TOKEN_RES.split('\r\n'))) return 0;
     console.log('Token accepted.');
     const end = req.indexOf('\r\n\r\n')+4;
-    console.log(req, end);
     return Buffer.byteLength(req.substring(0, end), 'utf8');
   };
 
