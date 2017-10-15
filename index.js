@@ -71,7 +71,6 @@ function packetWrite(head, body) {
 const Server = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
-  const TOKEN_LEN = Buffer.byteLength(TOKEN, 'utf8');
   const server = net.createServer();
   const members = new Map();
   const clients = new Set();
@@ -94,12 +93,14 @@ const Server = function(opt) {
 
   function handleToken(id, buf) {
     // 1. verify token, if valid send response
-    if(!stringIncludesAll(buf.toString(), TOKEN.split('\r\n'))) return 0;
+    const req = buf.toString();
+    if(!stringIncludesAll(req, TOKEN.split('\r\n'))) return 0;
     console.log(`Client ${id}.`);
     members.get(id).write(TOKEN_RES);
     clients.add(id);
     clientsWrite({'event': 'client', 'id': id});
-    return TOKEN_LEN;
+    const end = req.indexOf('\r\n\r\n')+4;
+    return Buffer.byteLength(req.substring(end), 'utf8');
   };
 
   function handlePacket(id, bufs, size) {
@@ -157,7 +158,6 @@ const Server = function(opt) {
 const Client = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
-  const TOKEN_RES_LEN = Buffer.byteLength(TOKEN_RES, 'utf8');
   const client = net.createConnection(opt.port, opt.host);
   const members = new Map();
   const bufs = [];
@@ -195,9 +195,11 @@ const Client = function(opt) {
 
   function handleToken(buf) {
     console.log(buf.toString());
-    if(!stringIncludesAll(buf.toString(), TOKEN_RES.split('\r\n'))) return 0;
+    const req = buf.toString();
+    if(!stringIncludesAll(req, TOKEN_RES.split('\r\n'))) return 0;
     console.log('Client ?.');
-    return TOKEN_RES_LEN;
+    const end = req.indexOf('\r\n\r\n')+4;
+    return Buffer.byteLength(req.substring(end), 'utf8');
   };
 
   function handleId(bufs, size) {
