@@ -101,7 +101,7 @@ const Server = function(opt) {
     clientsWrite({'event': 'client', 'id': id});
     const end = req.indexOf('\r\n\r\n')+4;
     console.log(req, end);
-    return Buffer.byteLength(req.substring(end), 'utf8');
+    return Buffer.byteLength(req.substring(0, end), 'utf8');
   };
 
   function handlePacket(id, bufs, size) {
@@ -201,7 +201,7 @@ const Client = function(opt) {
     console.log('Client ?.');
     const end = req.indexOf('\r\n\r\n')+4;
     console.log(req, end);
-    return Buffer.byteLength(req.substring(end), 'utf8');
+    return Buffer.byteLength(req.substring(0, end), 'utf8');
   };
 
   function handleId(bufs, size) {
