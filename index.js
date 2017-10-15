@@ -212,7 +212,7 @@ const Client = function(opt) {
     console.log(buf.toString());
     const req = buf.toString();
     if(!stringIncludesAll(req, TOKEN_RES.split('\r\n'))) return 0;
-    console.log('Client ?.');
+    console.log('Token accepted.');
     const end = req.indexOf('\r\n\r\n')+4;
     console.log(req, end);
     return Buffer.byteLength(req.substring(0, end), 'utf8');
@@ -243,7 +243,6 @@ const Client = function(opt) {
   // 1. on connect, send token
   client.on('connect', () => {
     console.log(`Client connect.`);
-    console.log(TOKEN.toString());
     client.write(TOKEN);
   });
   // 2. on data, process
