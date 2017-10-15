@@ -37,6 +37,7 @@ function stringIncludesAll(str, vals) {
 };
 
 function packetRead(bufs, size) {
+  console.log('packetRead', size);
   // 1. is packet available?
   if(size<4) return;
   if(bufs[0].length<4) buffersConcat(bufs);
@@ -49,10 +50,12 @@ function packetRead(bufs, size) {
   const body = buf.slice(4+4+hsz, psz);
   const head = JSON.parse(hst);
   bufs[0] = buf.slice(psz);
+  console.log('->', head, body, psz);
   return {head, body, 'size': psz};
 };
 
 function packetWrite(head, body) {
+  console.log('packetWrite', head, body);
   // 1. some defaults
   head = head||{};
   body = body||BUFFER_EMPTY;
