@@ -150,7 +150,7 @@ const Client = function(opt) {
   const client = net.createConnection(opt.sport, opt.shost);
   const members = new Map();
   const bufs = [];
-  var id = size = 0, gtok = true;
+  var id = 0, size = 0, gtok = true;
 
   function clientWrite(head, body) {
     // 1. write packet as client
@@ -235,3 +235,35 @@ const Client = function(opt) {
   client.on('error', (err) => {
     console.log(`Client ${id} error: `, err);
   });
+};
+
+// 2. setup exports, commandline
+module.exports = {Server, Client};
+if(require.main===module) {
+  var mode = E.MODE||'';
+  var host = E.HOST||'localhost';
+  var port = E.PORT||'80';
+  var shost = E.SHOST||'localhost';
+  var sport = E.SPORT||'80';
+  var token = E.TOKEN||'12345678';
+  var url = E.URL||'/';
+  for(var i=2, I=A.length; i<I; i++) {
+    if(A[i]==='--mode' || A[i]==='-m') mode = A[++i];
+    else if(A[i]==='--host' || A[i]==='-h') host = A[++i];
+    else if(A[i]==='--port' || A[i]==='-p') port = A[++i];
+    else if(A[i]==='--shost' || A[i]==='-i') shost = A[++i];
+    else if(A[i]==='--sport' || A[i]==='-q') sport = A[++i];
+    else if(A[i]==='--token' || A[i]==='-t') token = A[++i];
+    else if(A[i]==='--url' || A[i]==='-u') url = A[++i];
+  }
+  var opt = {
+    'host': host,
+    'port': parseInt(port),
+    'shost': shost,
+    'sport': parseInt(sport),
+    'token': token,
+    'url': url
+  };
+  if(mode.toLowerCase()==='server') return new Server(opt);
+  else return new Client(opt);
+}
