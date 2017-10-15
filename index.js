@@ -209,6 +209,7 @@ const Client = function(opt) {
   };
 
   function handleToken(buf) {
+    // 1. check if token was accepted
     const req = buf.toString();
     if(!stringIncludesAll(req, TOKEN_RES.split('\r\n'))) return 0;
     console.log('Token accepted.');
