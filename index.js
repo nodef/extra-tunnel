@@ -76,6 +76,7 @@ const Server = function(opt) {
   };
 
   function clientsWrite(head, body) {
+    console.log('clientsWrite', head, body.toString())
     // 1. write packet to all clients
     const buf = packetWrite(head, body);
     for(var id of clients)
@@ -184,6 +185,7 @@ const Client = function(opt) {
   };
 
   function handleToken(buf) {
+    console.log(buf.toString());
     if(!buf.toString().startsWith(TOKEN_RES)) return 0;
     console.log('Client ?.');
     return TOKEN_RES_LEN;
@@ -267,4 +269,4 @@ if(require.main===module) {
   };
   if(mode.toLowerCase()==='server') return new Server(opt);
   else return new Client(opt);
-}
+};
