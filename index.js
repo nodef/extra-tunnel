@@ -85,6 +85,7 @@ const Server = function(opt) {
   };
 
   function clientsWrite(head, body) {
+    console.log('clientsWrite', head, body? body.toString() : body)
     // 1. write packet to all clients
     const buf = packetWrite(head, body);
     for(var id of clients)
