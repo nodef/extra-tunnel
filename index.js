@@ -11,12 +11,14 @@ const tokenFn = (opt) => (
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
-  'Authorization: Basic '+opt.token+'\r\n'
+  'Authorization: Basic '+opt.token+'\r\n'+
+  '\r\n'
 );
 const tokenResFn = () => (
   'HTTP/1.1 101 Switching Protocols\r\n'+
   'Upgrade: tcp\r\n'+
-  'Connection: Upgrade\r\n'
+  'Connection: Upgrade\r\n'+
+  '\r\n'
 );
 
 function buffersConcat(bufs) {
@@ -25,6 +27,13 @@ function buffersConcat(bufs) {
   bufs.length = 0;
   bufs.push(buf);
   return buf;
+};
+
+function stringIncludesAll(str, vals) {
+  // 1. check if all values in string
+  for(var val of vals)
+    if(!str.includes(val)) return false;
+  return true;
 };
 
 function packetRead(bufs, size) {
@@ -85,9 +94,9 @@ const Server = function(opt) {
 
   function handleToken(id, buf) {
     // 1. verify token, if valid send response
-    if(!buf.toString().startsWith(TOKEN)) return 0;
+    if(!stringIncludesAll(buf.toString(), TOKEN.split('\r\n'))) return 0;
     console.log(`Client ${id}.`);
-    members.get(id).write(TOKEN_RES+'\r\n');
+    members.get(id).write(TOKEN_RES);
     clients.add(id);
     clientsWrite({'event': 'client', 'id': id});
     return TOKEN_LEN;
@@ -186,7 +195,7 @@ const Client = function(opt) {
 
   function handleToken(buf) {
     console.log(buf.toString());
-    if(!buf.toString().startsWith(TOKEN_RES)) return 0;
+    if(!stringIncludesAll(buf.toString(), TOKEN_RES.split('\r\n'))) return 0;
     console.log('Client ?.');
     return TOKEN_RES_LEN;
   };
@@ -215,7 +224,7 @@ const Client = function(opt) {
   client.on('connect', () => {
     console.log(`Client ? connect.`);
     console.log(TOKEN.toString());
-    client.write(TOKEN+'\r\n');
+    client.write(TOKEN);
   });
   // 2. on data, process
   client.on('data', (buf) => {
