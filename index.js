@@ -208,11 +208,11 @@ const Client = function(opt) {
     }
     return size;
   };
-
+  // 1. on connect, send token
   client.on('connect', () => {
     client.write(TOKEN);
   });
-  // 3. on data, process
+  // 2. on data, process
   client.on('data', (buf) => {
     // a. handle token, buffers
     var del = gtok? handleToken(buf) : 0;
@@ -225,13 +225,13 @@ const Client = function(opt) {
     if(!id) size = handleId(bufs, size);
     else size = handlePacket(bufs, size);
   });
-  // 1. on close, close members
+  // 3. on close, close members
   client.on('close', () => {
     console.log(`Client ${id} close.`);
     for(var [id, soc] of members)
       soc.destroy();
   });
-  // 1. on error, report
+  // 4. on error, report
   client.on('error', (err) => {
     console.log(`Client ${id} error: `, err);
   });
