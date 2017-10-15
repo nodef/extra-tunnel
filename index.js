@@ -3,6 +3,7 @@ const net = require('net');
 
 // 1. global variables
 const E = process.env;
+const A = process.argv;
 const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenFn = (opt) => (
   'GET '+opt.url+' HTTP/1.1\r\n'+
@@ -65,7 +66,7 @@ const Server = function(opt) {
   const server = net.createServer();
   const members = new Map();
   const clients = new Set();
-  server.listen(port);
+  server.listen(opt.port||80);
   var ids = 0;
 
   function memberWrite(id, head, body) {
@@ -81,44 +82,46 @@ const Server = function(opt) {
       members.get(id).write(buf);
   };
 
+  function handleToken(id, buf) {
+    // 1. verify token, if valid send response
+    if(!buf.toString().startsWith(TOKEN)) return 0;
+    console.log(`Client ${id}.`);
+    members.get(id).write(TOKEN_RES);
+    clients.add(id);
+    clientsWrite({'event': 'client', 'id': id});
+    return TOKEN_LEN;
+  };
+
+  function handlePacket(id, bufs, size) {
+    // 1. handle client packets
+    var p = null;
+    while(p = packetRead(bufs, size)) {
+      var h = p.head;
+      if(h.event==='data') memberWrite(h.id, {'event': 'data', 'id': id}, p.body);
+      else if(h.event==='close' && !client.has(h.id)) members.get(h.id).destroy();
+      size -= p.size;
+    }
+    return size;
+  };
+
   server.on('connection', (soc) => {
     // 1. connection data
-    const id = ids++;
+    const id = ++ids;
     const bufs = [];
     var size = 0, gtok = true;
-
-    function handleToken() {
-      // 1. verify token, if valid send response
-      if(!bufs[0].toString().startsWith(TOKEN)) return false;
-      console.log(`Client ${id}.`);
-      bufs[0] = bufs[0].slice(TOKEN_LEN);
-      size -= TOKEN_LEN;
-      clients.add(id);
-      soc.write(TOKEN_RES);
-      clientsWrite({'event': 'client', 'id': id});
-      return false;
-    };
-
-    function handleClient() {
-      // 1. process client packets
-      var p = null;
-      while(p = packetRead(bufs, size)) {
-        memberWrite(p.id, {'event': 'data', 'id': id}, p.body);
-        size -= p.size;
-      }
-    };
 
     // 2. register member
     members.set(id, soc);
     clientsWrite({'event': 'connection', 'id': id});
     // 3. on data, process
     soc.on('data', (buf) => {
-      // a. update buffers
+      // a. handle token, buffers
+      if(gtok) buf = buf.slice(handleToken(id, buf));
       size += buf.length;
       bufs.push(buf);
+      gtok = false;
       // b. handle actions
-      if(gtok) gtok = handleToken();
-      if(clients.has(id)) handleClient();
+      if(clients.has(id)) size = handlePacket(id, bufs, size);
       else clientsWrite({'event': 'data', 'id': id}, buf);
     });
     // 4. on close, delete member and inform
@@ -144,134 +147,91 @@ const Client = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
   const TOKEN_RES_LEN = Buffer.byteLength(TOKEN_RES, 'utf8');
-  const client = net.createConnection(opt.port, opt.host);
-  const links = new Map();
+  const client = net.createConnection(opt.sport, opt.shost);
+  const members = new Map();
   const bufs = [];
-  var id = size = 0;
-  var gtok = gid = true;
+  var id = size = 0, gtok = true;
 
   function clientWrite(head, body) {
-    // 1. write packet to client
+    // 1. write packet as client
     const buf = packetWrite(head, body);
     client.write(buf);
   };
 
-  function linkConnection(id) {
+  function memberConnect(id) {
+    // 1. connect to target
     const soc = net.createConnection(opt.port, opt.host);
+    // 2. on connect, add as member
     soc.on('connect', () => {
-      console.log(`Link ${id} connect.`);
-      links.set(id, soc);
+      console.log(`Member ${id} connect.`);
+      members.set(id, soc);
     });
+    // 3. on data, inform server
     soc.on('data', (buf) => {
       clientWrite({'event': 'data', 'id': id}, buf);
     });
+    // 4. on close, delete member and inform server
     soc.on('close', () => {
-      console.log(`Link ${id} close.`);
+      console.log(`Member ${id} close.`);
       clientWrite({'event': 'close', 'id': id});
-      links.delete(id);
+      members.delete(id);
+    });
+    // 5. on error, log error
+    soc.on('error', () => {
+      console.error(`Member ${id} error.`);
     });
   };
 
-  function handleToken() {
-    // 1. verify token response
-    if(!bufs[0].toString().startsWith(TOKEN_RES)) return !client.end();
-    console.log(`Client ${id}.`);
-    bufs[0] = bufs[0].slice(TOKEN_RES_LEN);
-    size -= TOKEN_RES_LEN;
-    return false;
+  function handleToken(buf) {
+    if(!buf.toString().startsWith(TOKEN_RES)) return 0;
+    console.log('Client ?.');
+    return TOKEN_RES_LEN;
   };
 
-  function handleId() {
+  function handleId(bufs, size) {
+    // 1. obtain client id
     const p = packetRead(bufs, size);
-    if(!p) return true;
+    if(!p) return 0;
     id = p.head.id;
-    size -= p.size;
-    return false;
+    return size-p.size;
   };
 
-  function handlePacket() {
+  function handlePacket(bufs, size) {
+    // 1. handle server packets
     var p = null;
     while(p = packetRead(bufs, size)) {
       const h = p.head;
-      if(h.event==='connection') linkConnection(h.id);
-      else if(h.event==='data') links.get(h.id).write(p.body);
-      else if(h.event==='close') links.get(h.id).end();
+      if(h.event==='connection') memberConnect(h.id);
+      else if(h.event==='data') members.get(h.id).write(p.body);
+      else if(h.event==='close') members.get(h.id).destroy();
       size -= p.size;
     }
+    return size;
   };
 
   client.on('connect', () => {
     client.write(TOKEN);
   });
-  client.on('data', () => {
-
+  // 3. on data, process
+  client.on('data', (buf) => {
+    // a. handle token, buffers
+    var del = gtok? handleToken(buf) : 0;
+    if(gtok && !del) return client.destroy();
+    if(del) buf = buf.slice(del);
+    size += buf.length;
+    bufs.push(buf);
+    gtok = false;
+    // b. handle actions
+    if(!id) size = handleId(bufs, size);
+    else size = handlePacket(bufs, size);
   });
-  // 1. on close, close links
+  // 1. on close, close members
   client.on('close', () => {
     console.log(`Client ${id} close.`);
-    for(var [id, soc] of links)
-      soc.close();
+    for(var [id, soc] of members)
+      soc.destroy();
   });
   // 1. on error, report
   client.on('error', (err) => {
     console.log(`Client ${id} error: `, err);
   });
-
-  server.on('connection', (soc) => {
-    // 1. connection data
-    const id = ids++;
-    const bufs = [];
-    var size = 0, old = false;
-
-    function handleToken() {
-      // 1. verify token, if valid send response
-      if(!bufs[0].toString().startsWith(TOKEN)) return;
-      console.log(`Client ${id}.`);
-      clientsWrite({'event': 'client', 'id': id});
-      soc.write(TOKEN_RES);
-      bufs[0] = bufs[0].slice(TOKEN_LEN);
-      size -= TOKEN_LEN;
-      clients.add(id);
-    };
-
-    function handleClient() {
-      // 1. process client packets
-      var p = null;
-      while(p = packetRead(bufs, size)) {
-        memberWrite(p.id, {'event': 'data', 'id': id}, p.body);
-        size -= p.size;
-      }
-    };
-
-    // 2. register member
-    members.set(id, soc);
-    clientsWrite({'event': 'connection', 'id': id});
-    // 3. on data, process
-    soc.on('data', (buf) => {
-      // a. update buffers
-      size += buf.length;
-      bufs.push(buf);
-      // b. handle actions
-      if(!old) handleToken();
-      if(clients.has(id)) handleClient();
-      else clientsWrite({'event': 'data', 'id': id}, buf);
-      old = true;
-    });
-    // 4. on close, delete member and inform
-    soc.on('close', () => {
-      console.log(`Member ${id} close.`);
-      clients.delete(id);
-      members.delete(id);
-      clientsWrite({'event': 'close', 'id': id});
-    });
-    // 5. on error, report
-    soc.on('error', (err) => {
-      console.error(`Member ${id} error: `, err);
-    });
-  });
-  server.on('error', (err) => {
-    // 1. close server on error
-    console.error('Server error: ', err);
-    server.close();
-  });
-};
