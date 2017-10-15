@@ -58,7 +58,7 @@ function packetWrite(head, body) {
   return buf;
 };
 
-const Server = function(port) {
+const Server = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
   const TOKEN_LEN = Buffer.byteLength(TOKEN, 'utf8');
@@ -80,6 +80,142 @@ const Server = function(port) {
     for(var id of clients)
       members.get(id).write(buf);
   };
+
+  server.on('connection', (soc) => {
+    // 1. connection data
+    const id = ids++;
+    const bufs = [];
+    var size = 0, gtok = true;
+
+    function handleToken() {
+      // 1. verify token, if valid send response
+      if(!bufs[0].toString().startsWith(TOKEN)) return false;
+      console.log(`Client ${id}.`);
+      bufs[0] = bufs[0].slice(TOKEN_LEN);
+      size -= TOKEN_LEN;
+      clients.add(id);
+      soc.write(TOKEN_RES);
+      clientsWrite({'event': 'client', 'id': id});
+      return false;
+    };
+
+    function handleClient() {
+      // 1. process client packets
+      var p = null;
+      while(p = packetRead(bufs, size)) {
+        memberWrite(p.id, {'event': 'data', 'id': id}, p.body);
+        size -= p.size;
+      }
+    };
+
+    // 2. register member
+    members.set(id, soc);
+    clientsWrite({'event': 'connection', 'id': id});
+    // 3. on data, process
+    soc.on('data', (buf) => {
+      // a. update buffers
+      size += buf.length;
+      bufs.push(buf);
+      // b. handle actions
+      if(gtok) gtok = handleToken();
+      if(clients.has(id)) handleClient();
+      else clientsWrite({'event': 'data', 'id': id}, buf);
+    });
+    // 4. on close, delete member and inform
+    soc.on('close', () => {
+      console.log(`Member ${id} close.`);
+      clients.delete(id);
+      members.delete(id);
+      clientsWrite({'event': 'close', 'id': id});
+    });
+    // 5. on error, report
+    soc.on('error', (err) => {
+      console.error(`Member ${id} error: `, err);
+    });
+  });
+  server.on('error', (err) => {
+    // 1. close server on error
+    console.error('Server error: ', err);
+    server.close();
+  });
+};
+
+const Client = function(opt) {
+  const TOKEN = tokenFn(opt);
+  const TOKEN_RES = tokenResFn(opt);
+  const TOKEN_RES_LEN = Buffer.byteLength(TOKEN_RES, 'utf8');
+  const client = net.createConnection(opt.port, opt.host);
+  const links = new Map();
+  const bufs = [];
+  var id = size = 0;
+  var gtok = gid = true;
+
+  function clientWrite(head, body) {
+    // 1. write packet to client
+    const buf = packetWrite(head, body);
+    client.write(buf);
+  };
+
+  function linkConnection(id) {
+    const soc = net.createConnection(opt.port, opt.host);
+    soc.on('connect', () => {
+      console.log(`Link ${id} connect.`);
+      links.set(id, soc);
+    });
+    soc.on('data', (buf) => {
+      clientWrite({'event': 'data', 'id': id}, buf);
+    });
+    soc.on('close', () => {
+      console.log(`Link ${id} close.`);
+      clientWrite({'event': 'close', 'id': id});
+      links.delete(id);
+    });
+  };
+
+  function handleToken() {
+    // 1. verify token response
+    if(!bufs[0].toString().startsWith(TOKEN_RES)) return !client.end();
+    console.log(`Client ${id}.`);
+    bufs[0] = bufs[0].slice(TOKEN_RES_LEN);
+    size -= TOKEN_RES_LEN;
+    return false;
+  };
+
+  function handleId() {
+    const p = packetRead(bufs, size);
+    if(!p) return true;
+    id = p.head.id;
+    size -= p.size;
+    return false;
+  };
+
+  function handlePacket() {
+    var p = null;
+    while(p = packetRead(bufs, size)) {
+      const h = p.head;
+      if(h.event==='connection') linkConnection(h.id);
+      else if(h.event==='data') links.get(h.id).write(p.body);
+      else if(h.event==='close') links.get(h.id).end();
+      size -= p.size;
+    }
+  };
+
+  client.on('connect', () => {
+    client.write(TOKEN);
+  });
+  client.on('data', () => {
+
+  });
+  // 1. on close, close links
+  client.on('close', () => {
+    console.log(`Client ${id} close.`);
+    for(var [id, soc] of links)
+      soc.close();
+  });
+  // 1. on error, report
+  client.on('error', (err) => {
+    console.log(`Client ${id} error: `, err);
+  });
 
   server.on('connection', (soc) => {
     // 1. connection data
