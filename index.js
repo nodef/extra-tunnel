@@ -32,7 +32,7 @@ function buffersConcat(bufs) {
 function stringIncludesAll(str, vals) {
   // 1. check if all values in string
   for(var val of vals)
-    if(!str.includes(val)) return false;
+    if(!str.includes(val)) { console.log(val); return false; }
   return true;
 };
 
