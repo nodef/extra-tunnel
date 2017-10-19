@@ -54,6 +54,20 @@ function Proxy(px, opt) {
     return true;
   };
 
+  function onMethod(id, req) {
+    // a. get details
+    const soc = sockets.get(id), mth = req.method;
+    const tkn = opt.methods[mth.toLowerCase()];
+    const ath = req.headers['proxy-authorization'].split(' ');
+    soc.removeAllListeners();
+    // b. validate token
+    if(tkn==null || (tkn && ath[1]!==tkn)) {
+      const err = new Error(`Bad token`);
+      console.error(`${px}:${id} error:`, err);
+      return socketClose(id);
+    }
+  };
+
   // 3. bad things happen, so just quit
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
