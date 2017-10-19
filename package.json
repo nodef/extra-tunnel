@@ -1,6 +1,6 @@
 {
   "name": "rhost",
-  "version": "0.0.95",
+  "version": "0.0.96",
   "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wolfram77/node-rproxy.git"
+    "url": "git+https://github.com/nodef/rhost.git"
   },
   "keywords": [
     "reverse",
@@ -18,7 +18,7 @@
   "author": "wolfram77@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wolfram77/node-rproxy/issues"
+    "url": "https://github.com/nodef/rhost/issues"
   },
-  "homepage": "https://github.com/wolfram77/node-rproxy#readme"
+  "homepage": "https://github.com/nodef/rhost#readme"
 }
