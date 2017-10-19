@@ -42,6 +42,17 @@ function Proxy(px, opt) {
   proxy.listen(opt.port||80);
   var idn = 0;
 
+  function socketClose(id) {
+    // 1. is socket closed?
+    const soc = sockets.get(id);
+    if(!soc) return false;
+    // 2. remove and close
+    console.log(`${px}:${id} closed`);
+    sockets.delete(id);
+    soc.destroy();
+    return true;
+  };
+
   // 3. bad things happen, so just quit
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
@@ -50,8 +61,8 @@ function Proxy(px, opt) {
   // 4. everyone brings their death with birth
   proxy.on('close', () => {
     console.log(`${px} closed`);
-    for(var [i, soc] of sockets)
-      soc.destroy();
+    for(var id of sockets.keys())
+      socketClose(id);
   });
   // 4. a new begining, a new noob
   proxy.on('connection', (soc) => {
@@ -59,13 +70,8 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // a. unexpected?, complain as always
-    soc.on('error', (err) => {
-      console.error(`${px}:${id} error:`, err);
-    });
-    soc.on('close', () => {
-      console.log(`${px}:${id} closed`);
-      sockets.delete(id);
-    });
+    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
+    soc.on('close', () => socketClose(id));
     // b. got something, play throw catch
     soc.on('data', (buf) => {
       const req = reqParse(buf);
