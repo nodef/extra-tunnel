@@ -55,7 +55,7 @@ function Proxy(px, opt) {
   proxy.on('connection', (soc) => {
     // a. report connection
     const id = idn++;
-    var typ = null, chn = null;
+    var typ = 0, chn = null;
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
@@ -63,6 +63,9 @@ function Proxy(px, opt) {
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
+      if(typ===1) channelWrite('/', {'event': 'data', 'from': id});
+      else if(typ>1) { /* 2 = client, 3 = server */ }
+      else { /* not yet decided */ }
       const req = reqParse(buf);
       console.log(req);
       const usr = req.headers['user-agent'];
