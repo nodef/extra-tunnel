@@ -53,13 +53,14 @@ function Proxy(px, opt) {
   });
   // 4. connection? handle it
   proxy.on('connection', (soc) => {
-    const id = idn++;
+    // a. report connection
+    var id = idn++, chn = null;
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
-    // a. unexpected?, complain as always
+    // b. error? report
     soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
     soc.on('close', () => socketClose(id));
-    // b. got something, play throw catch
+    // c. data? handle it
     soc.on('data', (buf) => {
       const req = reqParse(buf);
       console.log(req);
