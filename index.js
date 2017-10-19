@@ -16,6 +16,10 @@ function Proxy(px, opt) {
     const id = idn++;
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
+    // 1. if error, report to general
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} error:`, err);
+    });
   });
   // 4. if closed, close all sockets
   proxy.on('close', () => {
