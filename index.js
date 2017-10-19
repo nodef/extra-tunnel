@@ -46,6 +46,27 @@ function Proxy(px, opt) {
     if(soc) soc.write(packetWrite(head, body));
   };
 
+  function onServer(id, req) {
+    // 1. get details
+    var bufs = [], size = 0;
+    const soc = sockets.get(id), chn = req.url;
+    const ath = req.headers['proxy-authorization'].split(' ');
+    // 2. authenticate server
+    if(channels.has(chn)) return soc.emit('error', new Error(`${chn} not available`));
+    if(ath!==opt.channels[chn]) return soc.emit('error', new Error(`Bad token for ${chn}`));
+    // 3. accept server
+    bufs.push(req.buf.slice(req.length));
+    size = bufs[0].length;
+    soc.removeAllListeners('data');
+    soc.write(TOKEN_RES);
+    // 4. data? handle it
+    soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
+      const {event, to} = p.head, tos = to.split('/');
+      if(clients.get(tos[0])!==id) return;
+      sockets.get(tos[0]).write(packetWrite({event, 'to': tos[1]}, p.body));
+    }));
+  };
+
   // 3. error? report and close
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
@@ -60,8 +81,7 @@ function Proxy(px, opt) {
   // 4. connection? handle it
   proxy.on('connection', (soc) => {
     // a. report connection
-    const id = idn++;
-    const bufs = [];
+    const id = ''+(idn++), bufs = [];
     var typ = 0, size = 0;
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
@@ -74,6 +94,10 @@ function Proxy(px, opt) {
       else if(typ===2) return size = packetReads(size, bufs, buf, (p) => {
         const {event, from} = p.head;
         channelWrite(chn, {event, 'from': id+'/'+from}, p.body);
+      });
+      else if(typ===3) return size = packetReads(size, bufs, buf, (p) => {
+        const {event, to} = p.head, tos = to.split('/');
+        if(!clients.get(tos[0])===id);
       });
       else {
         const req = reqParse(buf);
