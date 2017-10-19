@@ -21,7 +21,7 @@ function reqParse(buf) {
   // 3. get byte length
   const buffer = buf, end = str.indexOf('\r\n\r\n')+4;
   const length = Buffer.byteLength(str.substring(0, end));
-  return {'top': lin[0], method, url, httpVersion, headers, length, buffer};
+  return {method, url, httpVersion, headers, length, buffer};
 };
 
 
