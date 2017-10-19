@@ -8,4 +8,9 @@ function Proxy(id, opt) {
   // 2. setup server
   const server = net.createServer();
   server.listen(opt.port||80);
+
+  server.on('error', (err) => {
+    console.error(`${id} error:`, err);
+    server.close();
+  });
 };
