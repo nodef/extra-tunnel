@@ -5,8 +5,8 @@ const tls = require('tls');
 
 // global variables
 const E = process.env;
-const USERAGENT_SERVER = 'johnny johnny, yes papa, eating sugar, no papa';
-const USERAGENT_CLIENT = 'telling lies, no papa, open your mouth, hahaha';
+const USERAGENT_SERVER = 'nodef/lhost/server';
+const USERAGENT_CLIENT = 'nodef/lhost/client';
 
 function urlParse(hrf) {
   // 1. return parts of url
