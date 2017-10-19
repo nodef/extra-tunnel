@@ -65,15 +65,13 @@ function Proxy(px, opt) {
     soc.on('data', (buf) => {
       if(typ===1) channelWrite('/', {'event': 'data', 'from': id});
       else if(typ>1) { /* 2 = client, 3 = server */ }
-      else { /* not yet decided */ }
-      const req = reqParse(buf);
-      console.log(req);
-      const usr = req.headers['user-agent'];
-      if(req.method==='CONNECT') onMethod(id, req);
-      else if(req.url.includes('://')) onMethod(id, req);
-      else if(usr===USERAGENT_SERVER) onServer(id, req);
-      else if(usr===USERAGENT_CLIENT) onClient(id, req);
-      else onSocket(id, req);
+      else {
+        const req = reqParse(buf);
+        const usr = req.headers['user-agent'];
+        if(usr===USERAGENT_SERVER) onServer(id, req);
+        else if(url===USERAGENT_CLIENT) onClient(id, req);
+        else onSocket(id, req);
+      }
     });
   });
 };
