@@ -1,4 +1,5 @@
 'use strict';
+const url = require('url');
 const net = require('net');
 
 // 1. global variables
@@ -36,6 +37,27 @@ function stringIncludesAll(str, vals) {
   return true;
 };
 
+function urlParse(hrf) {
+  // 1. return parts of url
+  return url.parse(hrf.includes('://')? hrf : 'x://'+hrf);
+};
+
+function httpHead(buf) {
+  // 1. get method, url, version from top
+  const str = buf.toString(), lin = str.split('\r\n');
+  const top = lin[0].split(' '), method = top[0], url = top[1];
+  const httpVersion = +top[2].substring(top[2].indexOf('/')+1);
+  for(var h=1, H=l.length, headers={}; h<H && lin[h]; h++) {
+    var i = lin[h].indexOf(': ');
+    var key = lin[h].substring(0, i).toLowerCase();
+    headers[key] = lin[h].substring(i+2);
+  }
+  // 2. get byte length
+  const end = str.indexOf('\r\n\r\n')+4;
+  const length = Buffer.byteLength(str.substring(0, end));
+  return {method, url, httpVersion, headers, length};
+};
+
 function packetRead(bufs, size) {
   // 1. is packet available?
   if(size<4) return;
@@ -68,11 +90,10 @@ function packetWrite(head, body) {
   return buf;
 };
 
-const Server = function(opt) {
-  const TOKEN = tokenFn(opt);
-  const TOKEN_RES = tokenResFn(opt);
+const Proxy = function(opt) {
   const server = net.createServer();
-  const members = new Map();
+  const sockets = new Map();
+  const connects = new Map();
   const clients = new Set();
   server.listen(opt.port||80);
   setInterval(() => {
@@ -82,17 +103,17 @@ const Server = function(opt) {
 
   function memberWrite(id, head, body) {
     // 1. write packet to a member
-    const soc = members.get(id);
+    const soc = sockets.get(id);
     soc.write(clients.has(id)? packetWrite(head, body) : body);
   };
 
   function memberClose(id, wrt) {
     // 1. close member if exists
-    var soc = members.get(id);
+    var soc = sockets.get(id);
     if(!soc) return false;
     console.log(`Member ${id} close`);
     clients.delete(id);
-    members.delete(id);
+    sockets.delete(id);
     soc.destroy();
     if(wrt) clientsWrite({'event': 'close', 'id': id});
     return true;
@@ -102,7 +123,7 @@ const Server = function(opt) {
     // 1. write packet to all clients
     const buf = packetWrite(head, body);
     for(var id of clients)
-      members.get(id).write(buf);
+      sockets.get(id).write(buf);
   };
 
   function handleToken(id, buf) {
@@ -110,7 +131,7 @@ const Server = function(opt) {
     const req = buf.toString();
     if(!stringIncludesAll(req, TOKEN.split('\r\n'))) return 0;
     console.log(`Client ${id}.`);
-    members.get(id).write(TOKEN_RES);
+    sockets.get(id).write(TOKEN_RES);
     clients.add(id);
     clientsWrite({'event': 'client', 'id': id});
     const end = req.indexOf('\r\n\r\n')+4;
@@ -137,7 +158,7 @@ const Server = function(opt) {
 
     // 2. register member
     console.log(`Member ${id} connection.`);
-    members.set(id, soc);
+    sockets.set(id, soc);
     clientsWrite({'event': 'connection', 'id': id});
     // 3. on data, process
     soc.on('data', (buf) => {
@@ -162,36 +183,38 @@ const Server = function(opt) {
   });
 };
 
-const Client = function(opt) {
+const Peer = function(opt) {
   const TOKEN = tokenFn(opt);
   const TOKEN_RES = tokenResFn(opt);
-  const client = net.createConnection(opt.port, opt.host);
-  const members = new Map();
-  const bufs = [];
-  var id = 0, size = 0, gtok = true;
+  const proxy = net.createConnection(opt.port, opt.host);
+  const server = net.createServer();
+  const sockets = new Map();
+  var bufs = [], size = 0;
+  var id = '?', sidn = 0;
+  var gtok = true;
 
-  function clientWrite(head, body) {
-    // 1. write packet as client
+  function proxyWrite(head, body) {
+    // 1. write packet to proxy
     const buf = packetWrite(head, body);
-    client.write(buf);
+    proxy.write(buf);
   };
 
-  function memberClose(id, wrt) {
-    // 1. close member if exists
-    var soc = members.get(id);
+  function socketClose(id, wrt) {
+    // 1. close socket if exists
+    var soc = sockets.get(id);
     if(!soc) return false;
-    console.log(`Member ${id} close`);
-    if(wrt) clientWrite({'event': 'close', 'id': id});
-    members.delete(id);
+    console.log(`${id} closed`);
+    if(wrt) proxyWrite({'event': 'close', 'id': id});
+    sockets.delete(id);
     soc.destroy();
     return true;
   };
 
-  function memberConnect(id) {
+  function socketConnect(id) {
     console.log(`Member ${id} connection.`);
     // 1. connect to target
     const soc = net.createConnection(opt.mport, opt.mhost);
-    members.set(id, soc);
+    sockets.set(id, soc);
     // 2. on connect, add as member
     soc.on('connect', () => {
       console.log(`Member ${id} connect.`);
@@ -230,7 +253,7 @@ const Client = function(opt) {
     while(p = packetRead(bufs, size)) {
       const h = p.head;
       if(h.event==='connection') memberConnect(h.id);
-      else if(h.event==='data') members.get(h.id).write(p.body);
+      else if(h.event==='data') sockets.get(h.id).write(p.body);
       else if(h.event==='close') memberClose(h.id);
       else if(h.event==='ping') clientWrite({'event': 'pong'});
       size -= p.size;
@@ -255,20 +278,22 @@ const Client = function(opt) {
     if(!id) size = handleId(bufs, size);
     else size = handlePacket(bufs, size);
   });
-  // 3. on close, close members
-  client.on('close', () => {
-    console.log(`Client ${id} close.`);
-    for(var [i, soc] of members)
+  // 3. on close, close sockets
+  proxy.on('close', () => {
+    console.log(`${id}.proxy closed`);
+    // exponential backoff reconnect
+    // but it was manually disconnected
+    for(var [i, soc] of sockets)
       soc.destroy();
   });
   // 4. on error, report
-  client.on('error', (err) => {
-    console.log(`Client ${id} error: `, err);
+  proxy.on('error', (err) => {
+    console.log(`${id}.proxy error:`, err);
   });
 };
 
 // 2. setup exports, commandline
-module.exports = {Server, Client};
+module.exports = {Proxy, Peer};
 if(require.main===module) {
   var o = {
     'mode': E.MODE||'',
