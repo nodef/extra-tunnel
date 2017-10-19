@@ -48,6 +48,10 @@ function Proxy(px, opt) {
     soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
     soc.on('close', () => console.log(`${px}:${id} closed`));
     soc.on('data', (buf) => {
+      const req = reqParse(buf);
+      const usr = req.headers['user-agent'];
+      if(req.method==='CONNECT') onMethod(id, req);
+      else if(req.url.includes('://')) onMethod(id, req);
     });
   });
 };
