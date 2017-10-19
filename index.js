@@ -20,16 +20,16 @@ function reqParse(buf) {
   const str = buf.toString(), lin = str.split('\r\n');
   const top = lin[0].split(' '), method = top[0], url = top[1];
   const httpVersion = +top[2].substring(top[2].indexOf('/')+1);
-  // 2. node loves lowercase headers
+  // 2. get headers as lowercase
   for(var h=1, H=lin.length, headers={}; h<H && lin[h]; h++) {
     var i = lin[h].indexOf(': ');
     var key = lin[h].substring(0, i).toLowerCase();
     headers[key] = lin[h].substring(i+2);
   }
-  // 3. get byte length (as i dont parse body)
+  // 3. get byte length
   const buffer = buf, end = str.indexOf('\r\n\r\n')+4;
   const length = Buffer.byteLength(str.substring(0, end));
-  return {method, url, httpVersion, headers, length, buffer};
+  return {'top': lin[0], method, url, httpVersion, headers, length, buffer};
 };
 
 
