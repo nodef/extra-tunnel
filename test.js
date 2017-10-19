@@ -1,9 +1,9 @@
 const https = require('http');
 
 const req = https.request({
-  'host': 'arproxy.herokuapp.com',
-  'method': 'CONNECT',
-  'path': 'www.google.co.in:5612'
+  'host': 'www.usda.gov',
+  'method': 'GET',
+  'path': 'https://www.usda.gov'
 }, (res) => {
   console.log(res.statusCode);
   console.log(res.headers);
