@@ -29,12 +29,13 @@ function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'Proxy';
   opt = opt||{};
+  opt.port = opt.port||80;
   opt.channels = opt.channels||{};
   opt.channels['/'] = opt.channels['/']||'';
   // 2. setup server
   const proxy = net.createServer();
   const sockets = new Map();
-  proxy.listen(opt.port||80);
+  proxy.listen(opt.port);
   var idn = 0;
 
   function socketClose(id) {
