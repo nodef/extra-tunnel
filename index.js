@@ -23,7 +23,7 @@ function reqParse(buf) {
   const top = lin[0].split(' '), method = top[0], url = top[1];
   const httpVersion = +top[2].substring(top[2].indexOf('/')+1);
   // 2. node loves lowercase headers
-  for(var h=1, H=l.length, headers={}; h<H && lin[h]; h++) {
+  for(var h=1, H=lin.length, headers={}; h<H && lin[h]; h++) {
     var i = lin[h].indexOf(': ');
     var key = lin[h].substring(0, i).toLowerCase();
     headers[key] = lin[h].substring(i+2);
