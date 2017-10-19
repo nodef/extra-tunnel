@@ -7,13 +7,13 @@ function reqParse(buf) {
   const str = buf.toString(), lin = str.split('\r\n');
   const top = lin[0].split(' '), method = top[0], url = top[1];
   const httpVersion = +top[2].substring(top[2].indexOf('/')+1);
-  // 2. get headers in lowercase
+  // 2. node loves lowercase headers
   for(var h=1, H=l.length, headers={}; h<H && lin[h]; h++) {
     var i = lin[h].indexOf(': ');
     var key = lin[h].substring(0, i).toLowerCase();
     headers[key] = lin[h].substring(i+2);
   }
-  // 3. get byte length
+  // 3. get byte length (as i dont parse body)
   const buffer = buf, end = str.indexOf('\r\n\r\n')+4;
   const length = Buffer.byteLength(str.substring(0, end));
   return {method, url, httpVersion, headers, length, buffer};
@@ -28,26 +28,26 @@ function Proxy(px, opt) {
   proxy.listen(opt.port||80);
   var idn = 0;
 
-  // 3. ahhh, a new begining
-  proxy.on('connection', (soc) => {
-    const id = idn++;
-    sockets.set(id, soc);
-    console.log(`${px}:${id} connected`);
-    soc.on('data', (buf) => {
-    });
-    // a. if closed or error, report to general
-    soc.on('close', () => console.log(`${px}:${id} closed`));
-    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
+  // 3. bad things happen, so just quit
+  proxy.on('error', (err) => {
+    console.error(`${px} error:`, err);
+    proxy.close();
   });
-  // 4. if closed, close all sockets
+  // 4. everyone brings their death with birth
   proxy.on('close', () => {
     console.log(`${px} closed`);
     for(var [i, soc] of sockets)
       soc.destroy();
   });
-  // 5. if error, close proxy
-  proxy.on('error', (err) => {
-    console.error(`${px} error:`, err);
-    proxy.close();
+  // 4. a new begining, a new noob
+  proxy.on('connection', (soc) => {
+    const id = idn++;
+    sockets.set(id, soc);
+    console.log(`${px}:${id} connected`);
+    // a. unexpected?, complain as always
+    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
+    soc.on('close', () => console.log(`${px}:${id} closed`));
+    soc.on('data', (buf) => {
+    });
   });
 };
