@@ -62,6 +62,9 @@ function Proxy(px, opt) {
       const usr = req.headers['user-agent'];
       if(req.method==='CONNECT') onMethod(id, req);
       else if(req.url.includes('://')) onMethod(id, req);
+      else if(usr===USERAGENT_SERVER) onServer(id, req);
+      else if(usr===USERAGENT_CLIENT) onClient(id, req);
+      else onSocket(id, req);
     });
   });
 };
