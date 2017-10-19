@@ -34,6 +34,8 @@ function Proxy(px, opt) {
   opt.channels['/'] = opt.channels['/']||'';
   // 2. setup server
   const proxy = net.createServer();
+  const channels = new Map();
+  const clients = new Map();
   const sockets = new Map();
   proxy.listen(opt.port);
   var idn = 0;
