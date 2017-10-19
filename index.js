@@ -40,6 +40,12 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 0;
 
+  function channelWrite(id, head, body) {
+    // 1. write to channel, ignore error
+    const soc = sockets.get(channels.get(id));
+    if(soc) soc.write(packetWrite(head, body));
+  };
+
   // 3. error? report and close
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
@@ -64,8 +70,11 @@ function Proxy(px, opt) {
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
-      if(typ===1) channelWrite('/', {'event': 'data', 'from': id});
-      else if(typ>1) { /* 2 = client, 3 = server */ }
+      if(typ===1) return channelWrite('/', {'event': 'data', 'from': id});
+      else if(typ===2) return size = packetReads(size, bufs, buf, (p) => {
+        const {event, from} = p.head;
+        channelWrite(chn, {event, 'from': id+'/'+from}, p.body);
+      });
       else {
         const req = reqParse(buf);
         const usr = req.headers['user-agent'];
