@@ -72,6 +72,7 @@ function Proxy(px, opt) {
     // b. got something, play throw catch
     soc.on('data', (buf) => {
       const req = reqParse(buf);
+      console.log(req);
       const usr = req.headers['user-agent'];
       if(req.method==='CONNECT') onMethod(id, req);
       else if(req.url.includes('://')) onMethod(id, req);
