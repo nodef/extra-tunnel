@@ -1,7 +1,7 @@
 {
   "name": "rhost",
-  "version": "0.0.94",
-  "description": "Reverse HTTP Server and Client for hosting Web Server from a non-public IP.",
+  "version": "0.0.95",
+  "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
     "start": "node ./",
