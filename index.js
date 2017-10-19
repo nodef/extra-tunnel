@@ -4,8 +4,8 @@ const net = require('net');
 
 // global variables
 const E = process.env;
-const USERAGENT_SERVER = 'nodef/lhost/server';
-const USERAGENT_CLIENT = 'nodef/lhost/client';
+const USERAGENT_SERVER = 'nodef/rhost/server';
+const USERAGENT_CLIENT = 'nodef/rhost/client';
 
 function urlParse(hrf) {
   // 1. return parts of url
