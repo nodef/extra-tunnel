@@ -7,13 +7,17 @@ function Proxy(id, opt) {
   opt = opt||{};
   // 2. setup server
   const server = net.createServer();
+  const sockets = new Map();
   server.listen(opt.port||80);
   var sidn = 0;
 
+  // 3. ahhh, a new begining
   server.on('connection', (soc) => {
-    const sid = id+'/'+(sidn++);
-    console.log(`${id} connected`);
+    const sid = sidn++;
+    sockets.set(sid, soc);
+    console.log(`${id}:${sid} connected`);
   });
+  // 4. bad things happen sometimes
   server.on('close', () => {
     console.log(`${id} closed`);
   });
