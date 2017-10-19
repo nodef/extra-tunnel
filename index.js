@@ -1,7 +1,6 @@
 'use strict';
 const url = require('url');
 const net = require('net');
-const tls = require('tls');
 
 // global variables
 const E = process.env;
