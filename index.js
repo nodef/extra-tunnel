@@ -9,6 +9,9 @@ function Proxy(id, opt) {
   const server = net.createServer();
   server.listen(opt.port||80);
 
+  server.on('connection', (soc) => {
+    console.log(`Mr. socket connected`);
+  });
   server.on('close', () => {
     console.log(`${id} closed`);
   });
