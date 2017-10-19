@@ -2,12 +2,14 @@
 const url = require('url');
 const net = require('net');
 
+
 function urlParse(hrf) {
   // 1. return parts of url
   hrf = parseInt(hrf)==hrf? ':'+hrf : hrf;
   hrf = hrf.includes('://')? hrf : 'x://'+hrf;
   return url.parse(hrf);
 };
+
 
 function reqParse(buf) {
   // 1. get method, url, version from top
@@ -25,6 +27,7 @@ function reqParse(buf) {
   const length = Buffer.byteLength(str.substring(0, end));
   return {method, url, httpVersion, headers, length, buffer};
 };
+
 
 function Proxy(px, opt) {
   // 1. setup defaults
