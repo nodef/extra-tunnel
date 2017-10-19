@@ -4,6 +4,7 @@ const net = require('net');
 
 
 // global variables
+const E = process.env;
 const USERAGENT_SERVER = 'johnny johnny, yes papa, eating sugar, no papa';
 const USERAGENT_CLIENT = 'telling lies, no papa, open your mouth, hahaha';
 
@@ -83,5 +84,5 @@ function Proxy(px, opt) {
 
 
 if(require.main===module) {
-  new Proxy('Proxy');
+  new Proxy('Proxy', {'port': E.PORT});
 }
