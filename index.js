@@ -40,17 +40,6 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 0;
 
-  function socketClose(id) {
-    // 1. is socket closed?
-    const soc = sockets.get(id);
-    if(!soc) return false;
-    // 2. remove and close
-    console.log(`${px}:${id} closed`);
-    sockets.delete(id);
-    soc.destroy();
-    return true;
-  };
-
   // 3. bad things happen, so just quit
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
