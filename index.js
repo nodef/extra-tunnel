@@ -60,8 +60,14 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // a. unexpected?, complain as always
-    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
-    soc.on('close', () => console.log(`${px}:${id} closed`));
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} error:`, err);
+    });
+    soc.on('close', () => {
+      console.log(`${px}:${id} closed`);
+      sockets.delete(id);
+    });
+    // b. got something, play throw catch
     soc.on('data', (buf) => {
       const req = reqParse(buf);
       const usr = req.headers['user-agent'];
