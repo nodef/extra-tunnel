@@ -2,12 +2,10 @@
 const url = require('url');
 const net = require('net');
 
-
 // global variables
 const E = process.env;
 const USERAGENT_SERVER = 'johnny johnny, yes papa, eating sugar, no papa';
 const USERAGENT_CLIENT = 'telling lies, no papa, open your mouth, hahaha';
-
 
 function urlParse(hrf) {
   // 1. return parts of url
@@ -15,7 +13,6 @@ function urlParse(hrf) {
   hrf = hrf.includes('://')? hrf : 'x://'+hrf;
   return url.parse(hrf);
 };
-
 
 function reqParse(buf) {
   // 1. get method, url, version from top
