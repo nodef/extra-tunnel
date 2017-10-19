@@ -80,3 +80,8 @@ function Proxy(px, opt) {
     });
   });
 };
+
+
+if(require.main===module) {
+  new Proxy('Proxy');
+}
