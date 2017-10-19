@@ -17,10 +17,13 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
   });
-  // 4. bad things happen sometimes
+  // 4. if closed, close all sockets
   proxy.on('close', () => {
     console.log(`${px} closed`);
+    for(var [i, soc] of sockets)
+      soc.destroy();
   });
+  // 5. if error, close proxy
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
     proxy.close();
