@@ -40,18 +40,18 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 0;
 
-  // 3. bad things happen, so just quit
+  // 3. error? report and close
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
     proxy.close();
   });
-  // 4. everyone brings their death with birth
+  // 4. closed? report and close sockets
   proxy.on('close', () => {
     console.log(`${px} closed`);
-    for(var id of sockets.keys())
-      socketClose(id);
+    for(var [id, soc] of sockets)
+      soc.destroy();
   });
-  // 4. a new begining, a new noob
+  // 4. connection? handle it
   proxy.on('connection', (soc) => {
     const id = idn++;
     sockets.set(id, soc);
