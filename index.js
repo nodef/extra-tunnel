@@ -7,13 +7,6 @@ const E = process.env;
 const USERAGENT_SERVER = 'nodef/rhost/server';
 const USERAGENT_CLIENT = 'nodef/rhost/client';
 
-function urlParse(hrf) {
-  // 1. return parts of url
-  hrf = parseInt(hrf)==hrf? ':'+hrf : hrf;
-  hrf = hrf.includes('://')? hrf : 'x://'+hrf;
-  return url.parse(hrf);
-};
-
 function reqParse(buf) {
   // 1. get method, url, version from top
   const str = buf.toString(), lin = str.split('\r\n');
