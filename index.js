@@ -2,6 +2,10 @@
 const url = require('url');
 const net = require('net');
 
+// global variables
+const USERAGENT_SERVER = 'johnny johnny, yes papa, eating sugar, no papa';
+const USERAGENT_CLIENT = 'telling lies, no papa, open your mouth, hahaha';
+
 
 function urlParse(hrf) {
   // 1. return parts of url
