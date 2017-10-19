@@ -29,6 +29,7 @@ function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'Proxy';
   opt = opt||{};
+  opt.channels = opt.channels||{};
   // 2. setup server
   const proxy = net.createServer();
   const sockets = new Map();
