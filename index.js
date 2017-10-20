@@ -132,7 +132,10 @@ function Proxy(px, opt) {
     soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
     servers.set(chn, id);
-    // data? handle it
+    // 3. notify all clients
+    for(var [i, ch] of targets)
+      if(ch===chn) clientWrite('c+', i, 0, BUFFER_EMPTY);
+    // 4. data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(targets.get(set)===chn) clientWrite(on, set, tag, body);
     }));
