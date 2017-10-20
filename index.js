@@ -70,18 +70,13 @@ function packetRead(bsz, bufs, buf, fn) {
 };
 
 function packetWrite(on, id, body) {
-  // 1. some defaults
-  head = head||{};
-  body = body||BUFFER_EMPTY;
-  // 2. allocate buffer
-  const hst = JSON.stringify(head);
-  const hsz = Buffer.byteLength(hst, 'utf8');
-  const buf = Buffer.allocUnsafe(4+4+hsz+body.length);
-  // 3. write [total size][head size][head][body]
-  buf.writeInt32BE(buf.length, 0);
-  buf.writeInt32BE(hsz, 4);
-  buf.write(hst, 4+4, hsz);
-  body.copy(buf, 4+4+hsz);
+  // 1. allocate buffer
+  const buf = Buffer.allocUnsafe(8+body.length);
+  // 2. write [size][on][id][body]
+  buf.writeUInt16BE(buf.length, 0);
+  buf.write(on, 2, 2);
+  buf.writeUInt32BE(id, 4);
+  body.copy(buf, 8);
   return buf;
 };
 
