@@ -5,6 +5,8 @@ const net = require('net');
 // global variables
 const E = process.env;
 const A = process.argv;
+const AUTH_SERVER = 'rhost/server';
+const AUTH_CLIENT = 'rhost/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenReqFn = (opt) => (
   'HEAD '+opt.url+' HTTP/1.1\r\n'+
@@ -145,7 +147,7 @@ function Proxy(px, opt) {
     }));
   };
 
-  function onSocket(id, req) {
+  function onSocket(id) {
     // 1. notify connection
     soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id, BUFFER_EMPTY);
@@ -176,11 +178,14 @@ function Proxy(px, opt) {
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
-      const req = reqParse(buf);
-      const ath = req.headers['proxy-authorization'];
-      if(usr===USERAGENT_SERVER) onMember(id, req, true);
-      else if(url===USERAGENT_CLIENT) onMember(id, req, false);
-      else onSocket(id, req);
+      const mth = buf.toString('utf8', 0, 4);
+      if(mth==='HEAD') return onSocket(id);
+      var req = reqParse(buf), err = null;
+      var ath = req.headers['proxy-authorization'];
+      if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
+      else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
+      else onSocket(id);
+      if(err) soc.emit('error', err);
     });
   });
 };
