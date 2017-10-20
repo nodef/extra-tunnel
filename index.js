@@ -145,36 +145,6 @@ function Proxy(px, opt) {
     }));
   };
 
-  function onMember(id, req) {
-    // 1. get details
-    var bufs = [], bsz = 0;
-    const soc = sockets.get(id), chn = req.url;
-    const ath = req.headers['proxy-authorization'].split(' ');
-    const svr = ath[0]==='Server', tkn = svr? opt.channels[chn] : tokens.get(chn);
-    // 2. authenticate server/client
-    if(tkn!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
-    if(svr) {
-      if(servers.has(chn)) return new Error(`${chn} not available`);
-      tokens.set(chn, ath[2]);
-      servers.set(chn, id);
-    }
-    else targets.set(id, chn);
-    // 3. accept server/client
-    bufs.push(req.buffer.slice(req.length));
-    size = bufs[0].length;
-    soc.removeAllListeners('data');
-    soc.write(tokenResFn());
-    // 4. data? handle it
-    if(svr) soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
-      const {event, to} = p.head, tos = to.split('/');
-      if(targets.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
-    }));
-    else soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p)=> {
-      const {event, from} = p.head;
-      channelWrite(chn, {event, 'from': id+'/'+from}, p.body);
-    }));
-  };
-
   function onSocket(id, req) {
     soc.removeAllListeners('data');
     channelWrite('/', {'event': 'connection', 'from': '0/'+id});
