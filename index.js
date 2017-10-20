@@ -6,6 +6,12 @@ const net = require('net');
 const E = process.env;
 const USERAGENT_SERVER = 'nodef/rhost/server';
 const USERAGENT_CLIENT = 'nodef/rhost/client';
+const TOKEN_RES = (
+  'HTTP/1.1 101 Switching Protocols\r\n'+
+  'Upgrade: tcp\r\n'+
+  'Connection: Upgrade\r\n'+
+  '\r\n'
+);
 
 function reqParse(buf) {
   // 1. get method, url, version from top
