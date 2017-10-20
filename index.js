@@ -133,6 +133,7 @@ function Proxy(px, opt) {
     soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
+    servers.set(id, chn);
     // 3. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0, BUFFER_EMPTY);
