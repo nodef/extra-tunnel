@@ -22,6 +22,14 @@ const tokenResFn = () => (
   '\r\n'
 );
 
+function buffersConcat(bufs) {
+  // 1. concat buffers into one
+  const buf = bufs.length>1? Buffer.concat(bufs) : bufs[0];
+  bufs.length = 0;
+  bufs.push(buf);
+  return buf;
+};
+
 function reqParse(buf) {
   // 1. get method, url, version from top
   const str = buf.toString(), lin = str.split('\r\n');
