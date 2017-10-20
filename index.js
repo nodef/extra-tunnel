@@ -129,6 +129,22 @@ function Proxy(px, opt) {
     }));
   };
 
+  function onClient(id, req) {
+    // 1. authenticate client
+    const chn = req.url, ath = (req.headers['proxy-authorization']||'').split(' ');
+    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
+    // 2. accept client
+    var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
+    const soc = sockets.get(id);
+    soc.removeAllListeners('data');
+    soc.write(tokenResFn());
+    targets.set(id, chn);
+    // data? handle it
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, set, body) => {
+      channelWrite(chn, on, id, channel.id, body);
+    }));
+  };
+
   function onMember(id, req) {
     // 1. get details
     var bufs = [], bsz = 0;
