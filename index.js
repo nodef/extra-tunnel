@@ -109,6 +109,25 @@ function Proxy(px, opt) {
     else sockets.get(id).destroy();
   };
 
+  function onServer(id, req) {
+    // 1. authenticate server
+    const chn = req.url, ath = (req.headers['proxy-authorization']||'').split(' ');
+    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
+    if(servers.has(chn)) return new Error(`${chn} not available`);
+    // 2. accept server
+    var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
+    const soc = sockets.get(id);
+    soc.removeAllListeners('data');
+    soc.write(tokenResFn());
+    tokens.set(chn, ath[2]||'');
+    servers.set(chn, id);
+    // data? handle it
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, body) => {
+      const tos = id.split('/');
+      if(targets.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
+    }));
+  };
+
   function onMember(id, req) {
     // 1. get details
     var bufs = [], bsz = 0;
