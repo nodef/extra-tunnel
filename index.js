@@ -4,6 +4,7 @@ const net = require('net');
 
 // global variables
 const E = process.env;
+const A = process.argv;
 const USERAGENT_SERVER = 'nodef/rhost/server';
 const USERAGENT_CLIENT = 'nodef/rhost/client';
 const tokenReqFn = (opt) => (
