@@ -35,6 +35,7 @@ function Proxy(px, opt) {
   // 2. setup server
   const proxy = net.createServer();
   const channels = new Map();
+  const ctokens = new Map();
   const clients = new Map();
   const sockets = new Map();
   proxy.listen(opt.port);
@@ -46,24 +47,30 @@ function Proxy(px, opt) {
     if(soc) soc.write(packetWrite(head, body));
   };
 
-  function onServer(id, req) {
+  function onMember(id, req, svr) {
     // 1. get details
     var bufs = [], size = 0;
     const soc = sockets.get(id), chn = req.url;
     const ath = req.headers['proxy-authorization'].split(' ');
-    // 2. authenticate server
-    if(channels.has(chn)) return soc.emit('error', new Error(`${chn} not available`));
-    if(ath!==opt.channels[chn]) return soc.emit('error', new Error(`Bad token for ${chn}`));
-    // 3. accept server
+    // 2. authenticate server/client
+    if(svr && channels.has(chn)) return new Error(`${chn} not available`);
+    const valid = svr? ath[0]===opt.servers[chn] : ath[0]===ctokens.get(chn);
+    if(!valid) return new Error(`Bad token for ${chn}`);
+    // 3. accept server/client
+    if(svr) ctokens.set(chn, ath[1]);
     bufs.push(req.buf.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
     soc.write(TOKEN_RES);
     // 4. data? handle it
-    soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
+    if(svr) soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
       const {event, to} = p.head, tos = to.split('/');
       if(clients.get(tos[0])!==id) return;
       sockets.get(tos[0]).write(packetWrite({event, 'to': tos[1]}, p.body));
+    }));
+    else soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p)=> {
+      const {event, from} = p.head;
+      channelWrite(chn, {event, 'from': id+'/'+from}, p.body);
     }));
   };
 
