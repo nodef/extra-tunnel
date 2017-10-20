@@ -5,7 +5,6 @@ const net = require('net');
 // global variables
 const E = process.env;
 const A = process.argv;
-const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenReqFn = (opt) => (
   'GET '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
