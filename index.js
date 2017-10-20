@@ -47,15 +47,15 @@ function reqParse(buf) {
   return {method, url, httpVersion, headers, length, buffer};
 };
 
-function packetRead(size, bufs, buf, fn) {
+function packetRead(bsz, bufs, buf, fn) {
   // 1. update buffers
   bufs.push(buf);
-  size += buf.length;
+  bsz += buf.length;
   // 1. is packet available?
-  if(size<4) return size;
+  if(bsz<4) return bsz;
   if(bufs[0].length<4) buffersConcat(bufs);
   const psz = bufs[0].readInt32BE(0);
-  if(psz>size) return size;
+  if(bsz<psz) return bsz;
   // 2. read [size][on][id][body]
   const buf = buffersConcat(bufs);
   const hsz = buf.readInt32BE(4);
