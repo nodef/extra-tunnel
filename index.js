@@ -39,7 +39,7 @@ function Proxy(px, opt) {
   const clients = new Map();
   const sockets = new Map();
   proxy.listen(opt.port);
-  var idn = 0;
+  var idn = 1;
 
   function channelWrite(id, head, body) {
     // 1. write to channel, ignore error
@@ -103,8 +103,7 @@ function Proxy(px, opt) {
   // 4. connection? handle it
   proxy.on('connection', (soc) => {
     // a. report connection
-    const id = ''+(idn++), bufs = [];
-    var typ = 0, size = 0;
+    const id = ''+(idn++);
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
@@ -112,22 +111,11 @@ function Proxy(px, opt) {
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
-      if(typ===1) return channelWrite('/', {'event': 'data', 'from': id});
-      else if(typ===2) return size = packetReads(size, bufs, buf, (p) => {
-        const {event, from} = p.head;
-        channelWrite(chn, {event, 'from': id+'/'+from}, p.body);
-      });
-      else if(typ===3) return size = packetReads(size, bufs, buf, (p) => {
-        const {event, to} = p.head, tos = to.split('/');
-        if(!clients.get(tos[0])===id);
-      });
-      else {
-        const req = reqParse(buf);
-        const usr = req.headers['user-agent'];
-        if(usr===USERAGENT_SERVER) onServer(id, req);
-        else if(url===USERAGENT_CLIENT) onClient(id, req);
-        else onSocket(id, req);
-      }
+      const req = reqParse(buf);
+      const usr = req.headers['user-agent'];
+      if(usr===USERAGENT_SERVER) onMember(id, req, true);
+      else if(url===USERAGENT_CLIENT) onMember(id, req, false);
+      else onSocket(id, req);
     });
   });
 };
