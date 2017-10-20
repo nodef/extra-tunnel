@@ -69,6 +69,22 @@ function packetRead(bsz, bufs, buf, fn) {
   return bsz;
 };
 
+function packetWrite(head, body) {
+  // 1. some defaults
+  head = head||{};
+  body = body||BUFFER_EMPTY;
+  // 2. allocate buffer
+  const hst = JSON.stringify(head);
+  const hsz = Buffer.byteLength(hst, 'utf8');
+  const buf = Buffer.allocUnsafe(4+4+hsz+body.length);
+  // 3. write [total size][head size][head][body]
+  buf.writeInt32BE(buf.length, 0);
+  buf.writeInt32BE(hsz, 4);
+  buf.write(hst, 4+4, hsz);
+  body.copy(buf, 4+4+hsz);
+  return buf;
+};
+
 function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'Proxy';
