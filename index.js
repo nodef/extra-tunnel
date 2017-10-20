@@ -41,9 +41,9 @@ function Proxy(px, opt) {
   // 2. setup server
   const proxy = net.createServer();
   const channels = new Map();
-  const ctokens = new Map();
   const clients = new Map();
   const sockets = new Map();
+  const tokens = new Map();
   proxy.listen(opt.port);
   var idn = 1;
 
@@ -67,9 +67,9 @@ function Proxy(px, opt) {
     const ath = req.headers['proxy-authorization'].split(' ');
     // 2. authenticate server/client
     if(svr && channels.has(chn)) return new Error(`${chn} not available`);
-    const valid = svr? ath[0]===opt.servers[chn] : ath[0]===ctokens.get(chn);
+    const valid = svr? ath[0]===opt.servers[chn] : ath[0]===tokens.get(chn);
     if(!valid) return new Error(`Bad token for ${chn}`);
-    if(svr) ctokens.set(chn, ath[1]);
+    if(svr) tokens.set(chn, ath[1]);
     // 3. accept server/client
     if(svr) channels.set(chn, id);
     else clients.set(id, chn);
