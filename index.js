@@ -154,7 +154,9 @@ function Proxy(px, opt) {
     soc.removeAllListeners('data');
     soc.write(tokenRes());
     clients.set(id, chn);
-    // data? handle it
+    // 3. get notified, if server connected
+    if(channels.has(chn)) clientWrite('c+', id, 0, BUFFER_EMPTY);
+    // 4. data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
     }));
