@@ -12,7 +12,7 @@ const tokenReqFn = (opt) => (
   'Connection: Upgrade\r\n'+
   'Host: '+opt.host+'\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
-  'Authorization: '+opt.auth+'\r\n'+
+  'Proxy-Authorization: '+opt.auth+'\r\n'+
   '\r\n'
 );
 const tokenResFn = () => (
