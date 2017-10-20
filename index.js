@@ -5,6 +5,7 @@ const net = require('net');
 // global variables
 const E = process.env;
 const A = process.argv;
+const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenReqFn = (opt) => (
   'GET '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
@@ -145,10 +146,12 @@ function Proxy(px, opt) {
   };
 
   function onSocket(id, req) {
+    // 1. notify connection
     soc.removeAllListeners('data');
-    channelWrite('/', {'event': 'connection', 'from': '0/'+id});
-    soc.on('data', (buf) => channelWrite('/', {'event': 'data', 'from': '0/'+id}, buf));
-    soc.on('close', () => channelWrite('/', {'event': 'close'}));
+    channelWrite('/', 'c+', 0, id, BUFFER_EMPTY);
+    // 2. data? close? notify
+    soc.on('data', (buf) => channelWrite('/', 'd+', 0, id, buf));
+    soc.on('close', () => channelWrite('/', 'c-', 0, id, BUFFER_EMPTY));
   };
 
   // 3. error? report and close
