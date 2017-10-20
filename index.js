@@ -103,7 +103,7 @@ function Proxy(px, opt) {
     if(soc) soc.write(packetWrite(on, id, set, body));
   };
 
-  function clientWrite(x, on, id, body) {
+  function clientWrite(x, on, id, set, body) {
     // 1. write to other/root client
     if(x!=='0') return sockets.get(x).write(packetWrite(on, id, body));
     if(on==='d+') sockets.get(id).write(body);
@@ -123,8 +123,8 @@ function Proxy(px, opt) {
     tokens.set(chn, ath[2]||'');
     servers.set(chn, id);
     // data? handle it
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, body) => {
-      const tos = id.split('/');
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, set, body) => {
+      if(targets.get(set)!==server.id) return;
       if(targets.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
     }));
   };
