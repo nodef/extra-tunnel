@@ -24,10 +24,10 @@ const tokenResFn = () => (
 
 function buffersConcat(bufs) {
   // 1. concat buffers into one
-  const buf = bufs.length>1? Buffer.concat(bufs) : bufs[0];
-  bufs.length = 0;
-  bufs.push(buf);
-  return buf;
+  if(bufs.length===1) return bufs[0];
+  bufs[0] = Buffer.concat(bufs);
+  bufs.length = 1;
+  return bufs[0];
 };
 
 function reqParse(buf) {
