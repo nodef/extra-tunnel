@@ -47,6 +47,13 @@ function Proxy(px, opt) {
     if(soc) soc.write(packetWrite(head, body));
   };
 
+  function clientWrite(id, head, body) {
+    // 1. write to other/root client
+    if(id!=='0') return sockets.get(id).write(packetWrite(head, body));
+    if(head.event==='close') sockets.get(head.to).destroy();
+    else sockets.get(head.to).write(body);
+  };
+
   function onMember(id, req, svr) {
     // 1. get details
     var bufs = [], size = 0;
@@ -56,8 +63,10 @@ function Proxy(px, opt) {
     if(svr && channels.has(chn)) return new Error(`${chn} not available`);
     const valid = svr? ath[0]===opt.servers[chn] : ath[0]===ctokens.get(chn);
     if(!valid) return new Error(`Bad token for ${chn}`);
-    // 3. accept server/client
     if(svr) ctokens.set(chn, ath[1]);
+    // 3. accept server/client
+    if(svr) channels.set(chn, id);
+    else clients.set(id, chn);
     bufs.push(req.buf.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
@@ -65,8 +74,7 @@ function Proxy(px, opt) {
     // 4. data? handle it
     if(svr) soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
       const {event, to} = p.head, tos = to.split('/');
-      if(clients.get(tos[0])!==id) return;
-      sockets.get(tos[0]).write(packetWrite({event, 'to': tos[1]}, p.body));
+      if(clients.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
     }));
     else soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p)=> {
       const {event, from} = p.head;
