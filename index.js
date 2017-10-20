@@ -123,7 +123,7 @@ function Proxy(px, opt) {
     tokens.set(chn, ath[2]||'');
     servers.set(chn, id);
     // data? handle it
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, set, body) => {
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(targets.get(set)!==server.id) return;
       if(targets.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
     }));
@@ -140,7 +140,7 @@ function Proxy(px, opt) {
     soc.write(tokenResFn());
     targets.set(id, chn);
     // data? handle it
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, id, set, body) => {
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, channel.id, body);
     }));
   };
