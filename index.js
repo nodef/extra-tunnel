@@ -100,6 +100,12 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 1;
 
+  function socketClose(id) {
+    // 1. is already closed?
+    const soc = sockets.get(id);
+    if(!soc) return false;
+  };
+
   function channelWrite(id, on, set, tag, body) {
     // 1. write to channel, if exists
     const soc = sockets.get(servers.get(id));
