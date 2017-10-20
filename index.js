@@ -55,16 +55,16 @@ function packetRead(bsz, bufs, buf, fn) {
     var buf = bufs[0].length<2? buffersConcat(bufs) : bufs[0];
     var psz = buf.readUInt16BE(0);
     if(bsz<psz) break;
-    // 2. read [size][on][id][set][body]
+    // 2. read [size][on][set][tag][body]
     buf = buffersConcat(bufs);
     const on = buf.toString('utf8', 2, 4);
-    const id = buf.readUInt16BE(4);
-    const set = buf.readUInt16BE(6);
+    const set = buf.readUInt16BE(4);
+    const tag = buf.readUInt16BE(6);
     const body = buf.slice(8, psz);
     // 3. update buffers and call
     bufs[0] = buf.slice(psz);
     bsz = bufs[0].length;
-    fn(on, id, set, body);
+    fn(on, set, tag, body);
   }
   return bsz;
 };
