@@ -6,7 +6,16 @@ const net = require('net');
 const E = process.env;
 const USERAGENT_SERVER = 'nodef/rhost/server';
 const USERAGENT_CLIENT = 'nodef/rhost/client';
-const TOKEN_RES = (
+const tokenReqFn = (opt) => (
+  'GET '+opt.url+' HTTP/1.1\r\n'+
+  'Upgrade: tcp\r\n'+
+  'Connection: Upgrade\r\n'+
+  'Host: '+opt.host+'\r\n'+
+  'Origin: http://'+opt.host+'\r\n'+
+  'Authorization: Basic '+opt.token+'\r\n'+
+  '\r\n'
+);
+const tokenResFn = () => (
   'HTTP/1.1 101 Switching Protocols\r\n'+
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
