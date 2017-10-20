@@ -69,14 +69,14 @@ function packetRead(bsz, bufs, buf, fn) {
   return bsz;
 };
 
-function packetWrite(on, id, set, body) {
+function packetWrite(on, set, tag, body) {
   // 1. allocate buffer
   const buf = Buffer.allocUnsafe(8+body.length);
-  // 2. write [size][on][id][set][body]
+  // 2. write [size][on][set][tag][body]
   buf.writeUInt16BE(buf.length, 0);
   buf.write(on, 2, 2);
-  buf.writeUInt16BE(id, 4);
-  buf.writeUInt16BE(set, 6);
+  buf.writeUInt16BE(set, 4);
+  buf.writeUInt16BE(tag, 6);
   body.copy(buf, 8);
   return buf;
 };
