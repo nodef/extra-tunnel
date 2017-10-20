@@ -69,7 +69,7 @@ function packetRead(bsz, bufs, buf, fn) {
   return bsz;
 };
 
-function packetWrite(head, body) {
+function packetWrite(on, id, body) {
   // 1. some defaults
   head = head||{};
   body = body||BUFFER_EMPTY;
