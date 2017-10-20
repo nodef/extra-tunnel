@@ -40,7 +40,7 @@ function Proxy(px, opt) {
   opt.channels['/'] = opt.channels['/']||'';
   // 2. setup server
   const proxy = net.createServer();
-  const channels = new Map();
+  const servers = new Map();
   const clients = new Map();
   const sockets = new Map();
   const tokens = new Map();
@@ -49,7 +49,7 @@ function Proxy(px, opt) {
 
   function channelWrite(id, head, body) {
     // 1. write to channel, ignore error
-    const soc = sockets.get(channels.get(id));
+    const soc = sockets.get(servers.get(id));
     if(soc) soc.write(packetWrite(head, body));
   };
 
@@ -66,12 +66,12 @@ function Proxy(px, opt) {
     const soc = sockets.get(id), chn = req.url;
     const ath = req.headers['proxy-authorization'].split(' ');
     // 2. authenticate server/client
-    if(svr && channels.has(chn)) return new Error(`${chn} not available`);
+    if(svr && servers.has(chn)) return new Error(`${chn} not available`);
     const valid = svr? ath[0]===opt.servers[chn] : ath[0]===tokens.get(chn);
     if(!valid) return new Error(`Bad token for ${chn}`);
     if(svr) tokens.set(chn, ath[1]);
     // 3. accept server/client
-    if(svr) channels.set(chn, id);
+    if(svr) servers.set(chn, id);
     else clients.set(id, chn);
     bufs.push(req.buf.slice(req.length));
     size = bufs[0].length;
