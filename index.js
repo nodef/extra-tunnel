@@ -84,7 +84,7 @@ function Proxy(px, opt) {
     }
     else targets.set(id, chn);
     // 3. accept server/client
-    bufs.push(req.buf.slice(req.length));
+    bufs.push(req.buffer.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
     soc.write(TOKEN_RES);

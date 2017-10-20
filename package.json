@@ -1,6 +1,6 @@
 {
   "name": "rhost",
-  "version": "0.0.133",
+  "version": "0.0.134",
   "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
