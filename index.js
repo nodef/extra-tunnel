@@ -6,12 +6,15 @@ const net = require('net');
 const E = process.env;
 const A = process.argv;
 const BUFFER_EMPTY = Buffer.alloc(0);
+const USERAGENT_SERVER = 'nodef/rhost/server';
+const USERAGENT_CLIENT = 'nodef/rhost/client';
 const tokenReqFn = (opt) => (
   'GET '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
   'Host: '+opt.host+'\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
+  'User-Agent: '+opt.userAgent+'\r\n'+
   'Proxy-Authorization: '+opt.auth+'\r\n'+
   '\r\n'
 );
