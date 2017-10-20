@@ -51,18 +51,22 @@ function packetRead(bsz, bufs, buf, fn) {
   // 1. update buffers
   bufs.push(buf);
   bsz += buf.length;
-  // 1. is packet available?
-  if(bsz<2) return bsz;
-  if(bufs[0].length<2) buffersConcat(bufs);
-  const psz = bufs[0].readUInt16BE(0);
-  if(bsz<psz) return bsz;
-  // 2. read [size][on][id][body]
-  buf = buffersConcat(bufs);
-  const on = buf.toString('utf8', 2, 4);
-  const id = buf.readUInt32BE(4);
-  const body = buf.slice(8, psz);
-  bufs[0] = buf.slice(psz);
-  return {on, id, body, 'size': psz};
+  while(bsz>=2) {
+    // 1. is packet available?
+    var buf = bufs[0].length<2? buffersConcat(bufs) : bufs[0];
+    var psz = buf.readUInt16BE(0);
+    if(bsz<psz) break;
+    // 2. read [size][on][id][body]
+    buf = buffersConcat(bufs);
+    const on = buf.toString('utf8', 2, 4);
+    const id = buf.readUInt32BE(4);
+    const body = buf.slice(8, psz);
+    // 3. update buffers and call
+    bufs[0] = buf.slice(psz);
+    bsz = bufs[0].length;
+    fn({on, id, body});
+  }
+  return bsz;
 };
 
 function Proxy(px, opt) {
