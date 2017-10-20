@@ -69,19 +69,21 @@ function Proxy(px, opt) {
     else sockets.get(head.to).write(body);
   };
 
-  function onMember(id, req, svr) {
+  function onMember(id, req) {
     // 1. get details
     var bufs = [], size = 0;
     const soc = sockets.get(id), chn = req.url;
     const ath = req.headers['proxy-authorization'].split(' ');
+    const svr = ath[0]==='Server', tkn = svr? opt.channels[chn] : tokens.get(chn);
     // 2. authenticate server/client
-    if(svr && servers.has(chn)) return new Error(`${chn} not available`);
-    const valid = svr? ath[0]===opt.servers[chn] : ath[0]===tokens.get(chn);
-    if(!valid) return new Error(`Bad token for ${chn}`);
-    if(svr) tokens.set(chn, ath[1]);
-    // 3. accept server/client
-    if(svr) servers.set(chn, id);
+    if(tkn!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
+    if(svr) {
+      if(servers.has(chn)) return new Error(`${chn} not available`);
+      tokens.set(chn, ath[2]);
+      servers.set(chn, id);
+    }
     else targets.set(id, chn);
+    // 3. accept server/client
     bufs.push(req.buf.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
