@@ -7,7 +7,7 @@ const E = process.env;
 const A = process.argv;
 const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenReqFn = (opt) => (
-  'GET '+opt.url+' HTTP/1.1\r\n'+
+  'HEAD '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
   'Host: '+opt.host+'\r\n'+
