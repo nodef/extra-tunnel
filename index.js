@@ -56,7 +56,7 @@ function packetRead(size, bufs, buf, fn) {
   if(bufs[0].length<4) buffersConcat(bufs);
   const psz = bufs[0].readInt32BE(0);
   if(psz>size) return size;
-  // 2. read [size][id][mode][body]
+  // 2. read [size][is][id][body]
   const buf = buffersConcat(bufs);
   const hsz = buf.readInt32BE(4);
   const hst = buf.toString('utf8', 4+4, 4+4+hsz);
