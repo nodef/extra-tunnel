@@ -40,6 +40,9 @@ function reqParse(buf) {
 };
 
 function packetRead(size, bufs, buf, fn) {
+  // 1. update buffers
+  bufs.push(buf);
+  size += buf.length;
   // 1. is packet available?
   if(size<4) return;
   if(bufs[0].length<4) buffersConcat(bufs);
