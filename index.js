@@ -39,7 +39,7 @@ function reqParse(buf) {
   return {method, url, httpVersion, headers, length, buffer};
 };
 
-function packetRead(bufs, size) {
+function packetRead(size, bufs, buf, fn) {
   // 1. is packet available?
   if(size<4) return;
   if(bufs[0].length<4) buffersConcat(bufs);
