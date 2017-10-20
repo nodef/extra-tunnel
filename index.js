@@ -52,10 +52,10 @@ function packetRead(size, bufs, buf, fn) {
   bufs.push(buf);
   size += buf.length;
   // 1. is packet available?
-  if(size<4) return;
+  if(size<4) return size;
   if(bufs[0].length<4) buffersConcat(bufs);
   const psz = bufs[0].readInt32BE(0);
-  if(psz>size) return null;
+  if(psz>size) return size;
   // 2. read [total size][head size][head][body]
   const buf = buffersConcat(bufs);
   const hsz = buf.readInt32BE(4);
