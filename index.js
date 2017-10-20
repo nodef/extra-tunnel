@@ -59,7 +59,8 @@ function packetRead(bsz, bufs, buf, fn) {
     // 2. read [size][on][id][body]
     buf = buffersConcat(bufs);
     const on = buf.toString('utf8', 2, 4);
-    const id = buf.readUInt32BE(4);
+    const id = buf.readUInt16BE(4);
+    const set = buf.readUInt16BE(6);
     const body = buf.slice(8, psz);
     // 3. update buffers and call
     bufs[0] = buf.slice(psz);
