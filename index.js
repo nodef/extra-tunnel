@@ -82,6 +82,13 @@ function Proxy(px, opt) {
     }));
   };
 
+  function onSocket(id, req) {
+    soc.removeAllListeners('data');
+    channelWrite('/', {'event': 'connection', 'from': '0/'+id});
+    soc.on('data', (buf) => channelWrite('/', {'event': 'data', 'from': '0/'+id}, buf));
+    soc.on('close', () => channelWrite('/', {'event': 'close'}));
+  };
+
   // 3. error? report and close
   proxy.on('error', (err) => {
     console.error(`${px} error:`, err);
