@@ -97,10 +97,10 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 1;
 
-  function channelWrite(x, on, id, set, body) {
+  function channelWrite(id, on, set, tag, body) {
     // 1. write to channel, if exists
-    const soc = sockets.get(servers.get(x));
-    if(soc) soc.write(packetWrite(on, id, set, body));
+    const soc = sockets.get(servers.get(id));
+    if(soc) soc.write(packetWrite(on, set, tag, body));
   };
 
   function clientWrite(x, on, id, set, body) {
