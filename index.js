@@ -52,12 +52,13 @@ function packetRead(bsz, bufs, buf, fn) {
   bufs.push(buf);
   bsz += buf.length;
   // 1. is packet available?
-  if(bsz<4) return bsz;
-  if(bufs[0].length<4) buffersConcat(bufs);
-  const psz = bufs[0].readInt32BE(0);
+  if(bsz<2) return bsz;
+  if(bufs[0].length<2) buffersConcat(bufs);
+  const psz = bufs[0].readUInt16BE(0);
   if(bsz<psz) return bsz;
   // 2. read [size][on][id][body]
-  const buf = buffersConcat(bufs);
+  buf = buffersConcat(bufs);
+
   const hsz = buf.readInt32BE(4);
   const hst = buf.toString('utf8', 4+4, 4+4+hsz);
   const body = buf.slice(4+4+hsz, psz);
