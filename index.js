@@ -58,13 +58,11 @@ function packetRead(bsz, bufs, buf, fn) {
   if(bsz<psz) return bsz;
   // 2. read [size][on][id][body]
   buf = buffersConcat(bufs);
-
-  const hsz = buf.readInt32BE(4);
-  const hst = buf.toString('utf8', 4+4, 4+4+hsz);
-  const body = buf.slice(4+4+hsz, psz);
-  const head = JSON.parse(hst);
+  const on = buf.toString('utf8', 2, 4);
+  const id = buf.readUInt32BE(4);
+  const body = buf.slice(8, psz);
   bufs[0] = buf.slice(psz);
-  return {head, body, 'size': psz};
+  return {on, id, body, 'size': psz};
 };
 
 function Proxy(px, opt) {
