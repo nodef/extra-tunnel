@@ -87,7 +87,7 @@ function Proxy(px, opt) {
     bufs.push(req.buffer.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
-    soc.write(TOKEN_RES);
+    soc.write(tokenResFn());
     // 4. data? handle it
     if(svr) soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
       const {event, to} = p.head, tos = to.split('/');
