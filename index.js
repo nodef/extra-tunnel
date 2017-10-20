@@ -73,7 +73,7 @@ function Proxy(px, opt) {
     // 1. get details
     var bufs = [], size = 0;
     const soc = sockets.get(id), chn = req.url;
-    const ath = req.headers.authorization.split(' ');
+    const ath = req.headers['proxy-authorization'].split(' ');
     // 2. authenticate server/client
     if(svr && servers.has(chn)) return new Error(`${chn} not available`);
     const valid = svr? ath[0]===opt.servers[chn] : ath[0]===tokens.get(chn);
