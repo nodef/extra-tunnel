@@ -14,6 +14,7 @@ const tokenReqFn = (opt) => (
   'Connection: Upgrade\r\n'+
   'Host: '+opt.host+'\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
+  'User-Agent: '+opt.userAgent+
   'Authorization: Basic '+opt.token+'\r\n'+
   '\r\n'
 );
