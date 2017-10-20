@@ -74,6 +74,7 @@ function packetRead(bsz, bufs, buf, fn) {
 
 function packetWrite(on, set, tag, body) {
   // 1. allocate buffer
+  body = body||BUFFER_EMPTY;
   const buf = Buffer.allocUnsafe(8+body.length);
   // 2. write [size][on][set][tag][body]
   buf.writeUInt16BE(buf.length, 0, true);
