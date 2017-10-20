@@ -39,6 +39,21 @@ function reqParse(buf) {
   return {method, url, httpVersion, headers, length, buffer};
 };
 
+function packetRead(bufs, size) {
+  // 1. is packet available?
+  if(size<4) return;
+  if(bufs[0].length<4) buffersConcat(bufs);
+  const psz = bufs[0].readInt32BE(0);
+  if(psz>size) return null;
+  // 2. read [total size][head size][head][body]
+  const buf = buffersConcat(bufs);
+  const hsz = buf.readInt32BE(4);
+  const hst = buf.toString('utf8', 4+4, 4+4+hsz);
+  const body = buf.slice(4+4+hsz, psz);
+  const head = JSON.parse(hst);
+  bufs[0] = buf.slice(psz);
+  return {head, body, 'size': psz};
+};
 
 function Proxy(px, opt) {
   // 1. setup defaults
