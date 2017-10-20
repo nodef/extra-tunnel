@@ -64,7 +64,7 @@ function packetRead(bsz, bufs, buf, fn) {
     // 3. update buffers and call
     bufs[0] = buf.slice(psz);
     bsz = bufs[0].length;
-    fn({on, id, body});
+    fn(on, id, body);
   }
   return bsz;
 };
