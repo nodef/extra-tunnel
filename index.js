@@ -177,7 +177,7 @@ function Proxy(px, opt) {
     // c. data? handle it
     soc.on('data', (buf) => {
       const req = reqParse(buf);
-      const usr = req.headers['user-agent'];
+      const ath = req.headers['proxy-authorization'];
       if(usr===USERAGENT_SERVER) onMember(id, req, true);
       else if(url===USERAGENT_CLIENT) onMember(id, req, false);
       else onSocket(id, req);
