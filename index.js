@@ -8,7 +8,7 @@ const A = process.argv;
 const AUTH_SERVER = 'rhost/server';
 const AUTH_CLIENT = 'rhost/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
-const tokenReqFn = (opt) => (
+const tokenReq = (opt) => (
   'HEAD '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
@@ -17,7 +17,7 @@ const tokenReqFn = (opt) => (
   'Proxy-Authorization: '+opt.auth+'\r\n'+
   '\r\n'
 );
-const tokenResFn = () => (
+const tokenRes = () => (
   'HTTP/1.1 101 Switching Protocols\r\n'+
   'Upgrade: tcp\r\n'+
   'Connection: Upgrade\r\n'+
@@ -123,7 +123,7 @@ function Proxy(px, opt) {
     console.log(`${px}:${id} ${chn} server token accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
-    soc.write(tokenResFn());
+    soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
     servers.set(chn, id);
     // data? handle it
@@ -141,7 +141,7 @@ function Proxy(px, opt) {
     console.log(`${px}:${id} ${chn} client token accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
-    soc.write(tokenResFn());
+    soc.write(tokenRes());
     targets.set(id, chn);
     // data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
