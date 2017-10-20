@@ -41,7 +41,7 @@ function Proxy(px, opt) {
   // 2. setup server
   const proxy = net.createServer();
   const servers = new Map();
-  const clients = new Map();
+  const targets = new Map();
   const sockets = new Map();
   const tokens = new Map();
   proxy.listen(opt.port);
@@ -72,7 +72,7 @@ function Proxy(px, opt) {
     if(svr) tokens.set(chn, ath[1]);
     // 3. accept server/client
     if(svr) servers.set(chn, id);
-    else clients.set(id, chn);
+    else targets.set(id, chn);
     bufs.push(req.buf.slice(req.length));
     size = bufs[0].length;
     soc.removeAllListeners('data');
@@ -80,7 +80,7 @@ function Proxy(px, opt) {
     // 4. data? handle it
     if(svr) soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p) => {
       const {event, to} = p.head, tos = to.split('/');
-      if(clients.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
+      if(targets.get(tos[0])===chn) clientWrite(tos[0], {event, 'to': tos[1]}, p.body);
     }));
     else soc.on('data', (buf) => size = packetReads(size, bufs, buf, (p)=> {
       const {event, from} = p.head;
