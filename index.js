@@ -111,7 +111,7 @@ function Proxy(px, opt) {
 
   function onMember(id, req) {
     // 1. get details
-    var bufs = [], size = 0;
+    var bufs = [], bsz = 0;
     const soc = sockets.get(id), chn = req.url;
     const ath = req.headers['proxy-authorization'].split(' ');
     const svr = ath[0]==='Server', tkn = svr? opt.channels[chn] : tokens.get(chn);
