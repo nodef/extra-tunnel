@@ -93,8 +93,9 @@ function Proxy(px, opt) {
   opt.channels['/'] = opt.channels['/']||'';
   // 2. setup server
   const proxy = net.createServer();
+  const channels = new Map();
   const servers = new Map();
-  const targets = new Map();
+  const clients = new Map();
   const sockets = new Map();
   const tokens = new Map();
   proxy.listen(opt.port);
@@ -108,7 +109,7 @@ function Proxy(px, opt) {
 
   function channelWrite(id, on, set, tag, body) {
     // 1. write to channel, if exists
-    const soc = sockets.get(servers.get(id));
+    const soc = sockets.get(channels.get(id));
     if(soc) soc.write(packetWrite(on, set, tag, body));
   };
 
@@ -123,7 +124,7 @@ function Proxy(px, opt) {
     // 1. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
     if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad server token for ${chn}`);
-    if(servers.has(chn)) return new Error(`${chn} not available`);
+    if(channels.has(chn)) return new Error(`${chn} not available`);
     // 2. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} server token accepted`);
@@ -131,13 +132,13 @@ function Proxy(px, opt) {
     soc.removeAllListeners('data');
     soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
-    servers.set(chn, id);
+    channels.set(chn, id);
     // 3. notify all clients
-    for(var [i, ch] of targets)
+    for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0, BUFFER_EMPTY);
     // 4. data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      if(targets.get(set)===chn) clientWrite(on, set, tag, body);
+      if(clients.get(set)===chn) clientWrite(on, set, tag, body);
     }));
   };
 
@@ -151,7 +152,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
-    targets.set(id, chn);
+    clients.set(id, chn);
     // data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
