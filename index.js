@@ -116,10 +116,11 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // 1. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
+    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad server token for ${chn}`);
     if(servers.has(chn)) return new Error(`${chn} not available`);
     // 2. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
+    console.log(`${px}:${id} ${chn} server token accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenResFn());
@@ -134,9 +135,10 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // 1. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`Bad token for ${chn}`);
+    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`Bad client token for ${chn}`);
     // 2. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
+    console.log(`${px}:${id} ${chn} client token accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenResFn());
