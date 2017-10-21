@@ -329,7 +329,7 @@ function Server(px, opt) {
       if(on==='c+') socketAdd(tag);
       else if(!soc) return;
       if(on==='d+') return soc.write(body);
-      socketDelete(tag);
+      sockets.delete(tag);
       soc.destroy();
     });
     // b. handle proxy accept/reject
