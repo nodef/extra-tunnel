@@ -311,6 +311,7 @@ function Server(px, opt) {
   // 1. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
+    proxy.destroy();
   });
   // 2. closed? report
   proxy.on('close', () => {
