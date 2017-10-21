@@ -175,6 +175,7 @@ function Proxy(px, opt) {
     // e. data? write to client
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        console.log('on', on, 'set', set, 'tag', tag, 'body', body);
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
       });
     });
@@ -308,6 +309,7 @@ function Server(px, opt) {
     });
     // d. data? handle it
     soc.on('data', (buf) => {
+      console.log('on', 'd+', 'set', 0, 'id', id, 'buf', buf);
       proxy.write(packetWrite('d+', 0, id, buf));
     });
   };
