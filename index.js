@@ -143,6 +143,7 @@ function Proxy(px, opt) {
       if(ch===chn) clientWrite('c+', i, 0);
     // 4. close? delete and notify clients
     soc.on('close', () => {
+      console.log(`${px}:${id} server closed`);
       tokens.delete(chn);
       servers.delete(chn);
       channels.delete(id);
@@ -170,6 +171,7 @@ function Proxy(px, opt) {
     if(channels.has(chn)) clientWrite('c+', id, 0);
     // close? delete
     soc.on('close', () => {
+      console.log(`${px}:${id} client closed`);
       clients.delete(id);
     });
     // 4. data? write to channel
