@@ -323,7 +323,7 @@ function Server(px, opt) {
     console.log(`${px} connected to ${opt.proxy}`);
   });
   // 4. data? handle it
-  proxy.on('data' (buf) => {
+  proxy.on('data', (buf) => {
     // a. handle packets from proxy
     if(acc) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
