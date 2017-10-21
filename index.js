@@ -279,6 +279,7 @@ function Server(px, opt) {
     // c. closed? report
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
+      if(sockets.has(id)) proxy.write(packetWrite('c-', 0, id));
     });
     // d. data? handle it
     soc.on('data', (buf) => {
