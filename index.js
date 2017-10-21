@@ -137,7 +137,7 @@ function Proxy(px, opt) {
     servers.set(id, chn);
     // 3. notify all clients
     for(var [i, ch] of clients)
-      if(ch===chn) clientWrite('c+', i, 0, BUFFER_EMPTY);
+      if(ch===chn) clientWrite('c+', i, 0);
     // 4. data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(clients.get(set)===chn) clientWrite(on, set, tag, body);
@@ -156,7 +156,7 @@ function Proxy(px, opt) {
     soc.write(tokenRes());
     clients.set(id, chn);
     // 3. get notified, if server connected
-    if(channels.has(chn)) clientWrite('c+', id, 0, BUFFER_EMPTY);
+    if(channels.has(chn)) clientWrite('c+', id, 0);
     // 4. data? handle it
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
@@ -166,10 +166,10 @@ function Proxy(px, opt) {
   function onSocket(id) {
     // 1. notify connection
     soc.removeAllListeners('data');
-    channelWrite('/', 'c+', 0, id, BUFFER_EMPTY);
+    channelWrite('/', 'c+', 0, id);
     // 2. data? close? notify
     soc.on('data', (buf) => channelWrite('/', 'd+', 0, id, buf));
-    soc.on('close', () => channelWrite('/', 'c-', 0, id, BUFFER_EMPTY));
+    soc.on('close', () => channelWrite('/', 'c-', 0, id));
   };
 
   // 3. error? report and close
