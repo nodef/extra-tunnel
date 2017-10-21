@@ -272,6 +272,10 @@ function Server(px, opt) {
     soc.on('error', (err) => {
       console.error(`${px}:${id}`, err);
     });
+    // b. closed? report
+    soc.on('close', () => {
+      console.log(`${px}:${id} closed`);
+    });
   };
 
   // 1. error? report
