@@ -217,9 +217,15 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
-    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
-    soc.on('close', () => socketClose(id));
-    // c. data? handle it
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} error:`, err);
+    });
+    // c. closed? delete
+    soc.on('close', () => {
+      console.log(`${px}:${id} closed`);
+      sockets.delete(id);
+    });
+    // d. data? handle it
     soc.on('data', (buf) => {
       const mth = buf.toString('utf8', 0, 4);
       if(mth==='HEAD') return onSocket(id);
