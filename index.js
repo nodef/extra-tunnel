@@ -267,6 +267,7 @@ function Server(px, opt) {
   opt = opt||{};
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
+  opt.channel = opt.channel||'/';
   opt.register = opt.register||'';
   opt.request = opt.request||'';
   // 2. setup server
