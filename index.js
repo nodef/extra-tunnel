@@ -149,7 +149,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
-    tokens.set(chn, ath[2]||'');
+    tokenc.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
     // c. notify all clients
@@ -159,7 +159,7 @@ function Proxy(px, opt) {
     soc.on('close', () => {
       channels.delete(id);
       servers.delete(chn);
-      tokens.delete(chn);
+      tokenc.delete(chn);
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
     });
@@ -174,7 +174,7 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(tokenc.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
