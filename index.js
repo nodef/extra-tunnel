@@ -272,7 +272,11 @@ function Server(px, opt) {
     soc.on('error', (err) => {
       console.error(`${px}:${id}`, err);
     });
-    // b. closed? report
+    // b. connected? report
+    soc.on('connect', (err) => {
+      console.log(`${px}:${id} connected to ${opt.server}`);
+    });
+    // c. closed? report
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
     });
