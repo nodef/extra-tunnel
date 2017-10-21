@@ -207,7 +207,7 @@ function Proxy(px, opt) {
   // 4. closed? report and close sockets
   proxy.on('close', () => {
     console.log(`${px} closed`);
-    for(var [id, soc] of sockets)
+    for(var [i, soc] of sockets)
       soc.destroy();
   });
   // 4. connection? handle it
