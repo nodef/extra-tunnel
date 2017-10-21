@@ -375,7 +375,6 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else throw new Error(`bad option ${A[i]}`);
   }
-  console.log(o);
   if(mode==='proxy') return new Proxy(null, o);
   else if(mode==='server') return new Server(null, o);
   else if(mode==='client') return new Client(null, o);
