@@ -110,9 +110,11 @@ function Proxy(px, opt) {
 
   function clientWrite(on, set, tag, body) {
     // 1. write to other/root client
-    if(set!==0) return sockets.get(set).write(packetWrite(on, 0, tag, body));
-    if(on==='d+') sockets.get(tag).write(body);
-    else sockets.get(tag).destroy();
+    const soc = sockets.get(set? set : tag);
+    if(set) return soc.write(packetWrite(on, 0, tag, body));
+    if(on==='d+') return soc.write(body);
+    sockets.delete(tag);
+    soc.destroy();
   };
 
   function onServer(id, req) {
