@@ -349,7 +349,7 @@ function Server(px, opt) {
       if(on==='c+') return socketAdd(tag);
       else if(!soc) return;
       if(on==='d+') return soc.write(body);
-      else if(on==='c-' && sockets.delete(tag)) soc.destroy();
+      if(sockets.delete(tag)) soc.destroy();
     });
     // b. handle proxy response
     const res = httpParse(buf);
