@@ -121,8 +121,9 @@ function Proxy(px, opt) {
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
-    if(soc) soc.write(packetWrite(on, set, tag, body));
-    else console.error(`${px}:${set} no server available on ${id}`);
+    if(soc) return soc.write(packetWrite(on, set, tag, body));
+    const err = new Error(`no server available on ${id}`);
+    console.error(`${px}:${set} error:`, err);
   };
 
   function clientWrite(on, set, tag, body) {
@@ -137,7 +138,7 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad server token for ${chn}`);
+    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`bad token for ${chn}`);
     if(channels.has(chn)) return new Error(`${chn} not available`);
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
@@ -168,7 +169,7 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`Bad client token for ${chn}`);
+    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`bad token for ${chn}`);
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
