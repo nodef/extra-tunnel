@@ -283,7 +283,6 @@ function Server(px, opt) {
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
-  console.log(purl, surl);
   const proxy = net.createConnection(purl.port, purl.hostname);
   const channel = opt.channel;
   const sockets = new Map();
