@@ -275,6 +275,17 @@ function Server(px, opt) {
   proxy.on('connect', () => {
     console.log(`${px} connected to ${opt.proxy}`);
   });
+  // 4. data? handle it
+  proxy.on('data' (buf) => {
+    bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+      const soc = sockets.get(tag);
+      if(on==='c+') socketAdd(tag);
+      else if(!soc) return;
+      if(on==='d+') return soc.write(body);
+      socketDelete(tag);
+      soc.destroy();
+    });
+  });
 };
 
 
