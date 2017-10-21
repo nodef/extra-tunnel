@@ -265,6 +265,11 @@ function Server(px, opt) {
   const sockets = new Map();
   var bufs = [], bsz = 0;
 
+  function socketAdd(id) {
+    const soc = net.createConnection(surl.port, surl.hostname);
+    sockets.set(id, soc);
+  };
+
   // 1. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
