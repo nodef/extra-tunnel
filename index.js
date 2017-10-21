@@ -160,9 +160,11 @@ function Proxy(px, opt) {
         if(ch===chn) clientWrite('c-', i, 0);
     });
     // e. data? write to client
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      if(clients.get(set)===chn) clientWrite(on, set, tag, body);
-    }));
+    soc.on('data', (buf) => {
+      bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        if(clients.get(set)===chn) clientWrite(on, set, tag, body);
+      });
+    });
   };
 
   function onClient(id, req) {
@@ -183,9 +185,11 @@ function Proxy(px, opt) {
       clients.delete(id);
     });
     // e. data? write to channel
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      channelWrite(chn, on, id, tag, body);
-    }));
+    soc.on('data', (buf) => {
+      bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        channelWrite(chn, on, id, tag, body);
+      });
+    });
   };
 
   function onSocket(id) {
