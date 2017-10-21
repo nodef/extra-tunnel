@@ -267,6 +267,7 @@ function Server(px, opt) {
   opt = opt||{};
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
+  opt.reconnect = opt.reconnect||false;
   opt.channel = opt.channel||'/';
   opt.register = opt.register||'';
   opt.request = opt.request||'';
@@ -276,7 +277,8 @@ function Server(px, opt) {
   const proxy = net.createConnection(purl.port, purl.hostname);
   const channel = opt.channel;
   const sockets = new Map();
-  var bufs = [], bsz = 0, acc = false;
+  var bufs = [], bsz = 0;
+  var acc = false;
 
   function socketAdd(id) {
     const soc = net.createConnection(surl.port, surl.hostname);
