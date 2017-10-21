@@ -212,7 +212,12 @@ function Proxy(px, opt) {
     for(var [i, soc] of sockets)
       soc.destroy();
   });
-  // 4. connection? handle it
+  // 5. listening? report
+  proxy.on('listening', () => {
+    const {port, family, address} = proxy.address();
+    console.log(`${px} listening on ${address}:${port} (${address})`);
+  });
+  // 6. connection? handle it
   proxy.on('connection', (soc) => {
     // a. report connection
     const id = socketAdd(soc);
