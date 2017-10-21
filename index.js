@@ -336,7 +336,7 @@ function Server(px, opt) {
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       console.log('on', on, 'set', set, 'tag', tag, 'body', body);
       const soc = sockets.get(tag);
-      if(on==='c+') socketAdd(tag);
+      if(on==='c+') return socketAdd(tag);
       else if(!soc) return;
       if(on==='d+') return soc.write(body);
       sockets.delete(tag);
