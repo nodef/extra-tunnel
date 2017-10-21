@@ -102,10 +102,13 @@ function Proxy(px, opt) {
   proxy.listen(opt.port);
   var idn = 1;
 
-  function socketClose(id) {
+  function socketClose(id, wrt) {
     // 1. is already closed?
     const soc = sockets.get(id);
     if(!soc) return false;
+    if(servers.has(id)) {
+
+    }
   };
 
   function channelWrite(id, on, set, tag, body) {
@@ -142,6 +145,13 @@ function Proxy(px, opt) {
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(clients.get(set)===chn) clientWrite(on, set, tag, body);
     }));
+    soc.on('close', () => {
+      tokens.delete(chn);
+      servers.delete(chn);
+      channels.delete(id);
+      for(var [i, ch] of clients)
+        if(ch===chn) clientWrite('c-', i, 0);
+    });
   };
 
   function onClient(id, req) {
