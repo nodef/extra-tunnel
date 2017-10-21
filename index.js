@@ -267,6 +267,10 @@ function Server(px, opt) {
   proxy.on('close', () => {
     console.log(`${px} closed`);
   });
+  // 3. connected? report
+  proxy.on('connect', () => {
+    console.log(`${px} connected to ${opt.proxy}`);
+  });
 };
 
 
