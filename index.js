@@ -189,6 +189,7 @@ function Proxy(px, opt) {
 
   function onSocket(id) {
     // a. notify connection
+    const soc = sockets.get(id);
     soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id);
     // b. closed? delete and notify if exists
