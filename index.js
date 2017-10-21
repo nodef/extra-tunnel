@@ -215,7 +215,7 @@ function Proxy(px, opt) {
   // 5. listening? report
   proxy.on('listening', () => {
     const {port, family, address} = proxy.address();
-    console.log(`${px} listening on ${address}:${port} (${address})`);
+    console.log(`${px} listening on ${address}:${port} (${family})`);
   });
   // 6. connection? handle it
   proxy.on('connection', (soc) => {
