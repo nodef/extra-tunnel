@@ -258,6 +258,11 @@ function Server(px, opt) {
   const proxy = net.createConnection(url.port, url.hostname);
   const sockets = new Map();
   var bufs = [], bsz = 0;
+
+  // 1. error, report
+  proxy.on('error', (err) => {
+    console.error(`${px}`, err);
+  });
 };
 
 
