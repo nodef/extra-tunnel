@@ -203,7 +203,9 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
-    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} error:`, err);
+    });
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
