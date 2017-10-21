@@ -115,6 +115,7 @@ function Proxy(px, opt) {
   const tokens = new Map();
   const idfree = [];
   proxy.listen(purl.port);
+  clients.set(0, '/');
   var idn = 1;
 
   function socketAdd(soc) {
