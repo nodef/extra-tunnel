@@ -174,7 +174,7 @@ function Proxy(px, opt) {
     });
     // e. data? write to client
     soc.on('data', (buf) => {
-      console.log('buf');
+      console.log('buf', buf);
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
         console.log('on', on, 'set', set, 'tag', tag, 'body', body);
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
