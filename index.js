@@ -133,7 +133,7 @@ function Proxy(px, opt) {
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} server token accepted`);
     const soc = sockets.get(id);
-    soc.removeAllListeners('data');
+    soc.removeAllListeners();
     soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
@@ -141,10 +141,7 @@ function Proxy(px, opt) {
     // 3. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0);
-    // 4. data? write to client
-    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      if(clients.get(set)===chn) clientWrite(on, set, tag, body);
-    }));
+    // 4. close? delete and notify clients
     soc.on('close', () => {
       tokens.delete(chn);
       servers.delete(chn);
@@ -152,6 +149,10 @@ function Proxy(px, opt) {
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
     });
+    // 5. data? write to client
+    soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+      if(clients.get(set)===chn) clientWrite(on, set, tag, body);
+    }));
   };
 
   function onClient(id, req) {
