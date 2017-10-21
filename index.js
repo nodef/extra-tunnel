@@ -34,8 +34,8 @@ function buffersConcat(bufs) {
 
 function urlParse(hrf) {
   // 1. return parts of url
-  hrf = parseInt(hrf)==hrf? ':'+hrf : hrf;
-  hrf = hrf.includes('://')? hrf : 'x://'+hrf;
+  hrf = parseInt(hrf)==hrf? 'localhost:'+hrf : hrf;
+  hrf = hrf.includes('://')? hrf : 'http://'+hrf;
   return url.parse(hrf);
 };
 
@@ -282,6 +282,7 @@ function Server(px, opt) {
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
+  console.log(purl, surl);
   const proxy = net.createConnection(purl.port, purl.hostname);
   const channel = opt.channel;
   const sockets = new Map();
@@ -373,6 +374,7 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else throw new Error(`bad option ${A[i]}`);
   }
+  console.log(o);
   if(mode==='proxy') return new Proxy(null, o);
   else if(mode==='server') return new Server(null, o);
   else if(mode==='client') return new Client(null, o);
