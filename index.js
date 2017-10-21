@@ -268,6 +268,10 @@ function Server(px, opt) {
   function socketAdd(id) {
     const soc = net.createConnection(surl.port, surl.hostname);
     sockets.set(id, soc);
+    // a. error? report
+    soc.on('error', (err) => {
+      console.error(`${px}:${id}`, err);
+    });
   };
 
   // 1. error? report
