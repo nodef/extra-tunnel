@@ -234,7 +234,7 @@ function Proxy(px, opt) {
       var ath = req.headers['proxy-authorization'];
       if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
       else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
-      else onSocket(id);
+      else return onSocket(id);
       if(err) soc.emit('error', err);
     });
   });
