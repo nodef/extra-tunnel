@@ -132,6 +132,10 @@ function Proxy(px, opt) {
     // 3. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0);
+    // 4. error? report
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} server error:`, err);
+    });
     // 4. closed? delete and notify clients
     soc.on('close', () => {
       console.log(`${px}:${id} server closed`);
@@ -160,6 +164,10 @@ function Proxy(px, opt) {
     clients.set(id, chn);
     // 3. get notified, if server connected
     if(channels.has(chn)) clientWrite('c+', id, 0);
+    // error? report
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} client error:`, err);
+    });
     // closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} client closed`);
@@ -173,13 +181,17 @@ function Proxy(px, opt) {
 
   function onSocket(id) {
     // 1. notify connection
-    soc.removeAllListeners('data');
+    soc.removeAllListeners();
     channelWrite('/', 'c+', 0, id);
-    // 2. closed? delete and notify if exists
+    // 2. error? report
+    soc.on('error', (err) => {
+      console.error(`${px}:${id} socket error:`, err);
+    });
+    // 3. closed? delete and notify if exists
     soc.on('close', () => {
       if(sockets.delete(id)) channelWrite('/', 'c-', 0, id);
     });
-    // 2. data? write to channel
+    // 4. data? write to channel
     soc.on('data', (buf) => {
       channelWrite('/', 'd+', 0, id, buf);
     });
@@ -203,9 +215,7 @@ function Proxy(px, opt) {
     sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
-    soc.on('error', (err) => {
-      console.error(`${px}:${id} error:`, err);
-    });
+    soc.on('error', (err) => console.error(`${px}:${id} error:`, err));
     soc.on('close', () => socketClose(id));
     // c. data? handle it
     soc.on('data', (buf) => {
