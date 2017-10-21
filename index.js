@@ -260,6 +260,7 @@ function Proxy(px, opt) {
       else {
         var req = httpParse(buf);
         var ath = req.headers['proxy-authorization']||'';
+        console.log(req);
         if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
         else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
         else err = onSocket(id);
