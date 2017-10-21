@@ -2,7 +2,7 @@
 const url = require('url');
 const net = require('net');
 
-// global variables
+// I. global variables
 const E = process.env;
 const A = process.argv;
 const AUTH_SERVER = 'rhost/server';
@@ -89,6 +89,7 @@ function packetWrite(on, set, tag, body) {
 };
 
 
+// II. proxy constructor
 function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'proxy';
@@ -261,6 +262,7 @@ function Proxy(px, opt) {
 };
 
 
+// III. server constructor
 function Server(px, opt) {
   // 1. setup defaults
   px = px||'server';
@@ -343,6 +345,5 @@ function Server(px, opt) {
 };
 
 
-if(require.main===module) {
-  new Proxy('Proxy', {'port': E.PORT});
-}
+// IV. setup exports
+module.exports = {Proxy, Server};
