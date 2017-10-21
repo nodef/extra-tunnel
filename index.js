@@ -163,11 +163,15 @@ function Proxy(px, opt) {
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
     const soc = sockets.get(id);
-    soc.removeAllListeners('data');
+    soc.removeAllListeners();
     soc.write(tokenRes());
     clients.set(id, chn);
     // 3. get notified, if server connected
     if(channels.has(chn)) clientWrite('c+', id, 0);
+    // close? delete
+    soc.on('close', () => {
+      clients.delete(id);
+    });
     // 4. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
