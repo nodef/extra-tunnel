@@ -88,7 +88,7 @@ function packetWrite(on, set, tag, body) {
 
 function Proxy(px, opt) {
   // 1. setup defaults
-  px = px||'Proxy';
+  px = px||'proxy';
   opt = opt||{};
   opt.proxy = opt.proxy||'80';
   opt.channels = opt.channels||{};
