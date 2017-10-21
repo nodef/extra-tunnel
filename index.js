@@ -173,6 +173,7 @@ function Proxy(px, opt) {
     // e. data? write to client
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
       });
     });
@@ -198,6 +199,7 @@ function Proxy(px, opt) {
     // e. data? write to channel
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         channelWrite(chn, on, id, tag, body);
       });
     });
@@ -279,6 +281,7 @@ function Server(px, opt) {
   opt.channel = opt.channel||'/';
   opt.key = opt.key||'';
   opt.token = opt.token||'';
+  opt.ping = opt.ping||8000;
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
@@ -310,26 +313,35 @@ function Server(px, opt) {
     });
   };
 
-  // 1. register as server
+  function proxyPing() {
+    // a. send a ping packet
+    if(proxy.destroyed) return;
+    proxy.write(packetWrite('pi', 0, 0));
+    setTimeout(proxyPing, opt.ping);
+  };
+
+  // 3. register as server
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
     'auth': USERAGENT_SERVER+' '+opt.key+' '+opt.token
   }));
-  // 1. error? report
+  // 4. try to keep connection alive
+  setTimeout(proxyPing, opt.ping);
+  // 5. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
     proxy.destroy();
   });
-  // 2. closed? report
+  // 6. closed? report
   proxy.on('close', () => {
     console.log(`${px} closed`);
   });
-  // 3. connected? report
+  // 7. connected? report
   proxy.on('connect', () => {
     console.log(`${px} connected to ${opt.proxy}`);
   });
-  // 4. data? handle it
+  // 8. data? handle it
   proxy.on('data', (buf) => {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
@@ -337,8 +349,7 @@ function Server(px, opt) {
       if(on==='c+') return socketAdd(tag);
       else if(!soc) return;
       if(on==='d+') return soc.write(body);
-      sockets.delete(tag);
-      soc.destroy();
+      else if(on==='c-' && sockets.delete(tag)) soc.destroy();
     });
     // b. handle proxy response
     const res = httpParse(buf);
