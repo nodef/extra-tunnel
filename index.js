@@ -121,9 +121,8 @@ function Proxy(px, opt) {
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
-    if(soc) return soc.write(packetWrite(on, set, tag, body));
-    const err = new Error(`no server available on ${id}`);
-    console.error(`${px}:${set}`, err);
+    if(soc) soc.write(packetWrite(on, set, tag, body));
+    return soc;
   };
 
   function clientWrite(on, set, tag, body) {
@@ -185,7 +184,7 @@ function Proxy(px, opt) {
     });
     // e. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      channelWrite(chn, on, id, tag, body);
+      if(!channelWrite(chn, on, id, tag, body)) clientWrite('c-', id, tag);
     }));
   };
 
@@ -200,7 +199,7 @@ function Proxy(px, opt) {
     });
     // c. data? write to channel
     soc.on('data', (buf) => {
-      channelWrite('/', 'd+', 0, id, buf);
+      if(!channelWrite('/', 'd+', 0, id, buf)) soc.destroy();
     });
   };
 
