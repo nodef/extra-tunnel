@@ -287,6 +287,12 @@ function Server(px, opt) {
     });
   };
 
+  // 1. register as server
+  proxy.write(tokenReq({
+    'url': opt.channel,
+    'host': purl.hostname,
+    'auth': AUTH_SERVER+' '+opt.register+' '+opt.request
+  }));
   // 1. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
