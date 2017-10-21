@@ -268,8 +268,8 @@ function Server(px, opt) {
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
   opt.channel = opt.channel||'/';
-  opt.token1 = opt.token1||'';
-  opt.token2 = opt.token2||'';
+  opt.tokens = opt.tokens||'';
+  opt.tokenc = opt.tokenc||'';
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
@@ -305,7 +305,7 @@ function Server(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': AUTH_SERVER+' '+opt.token1+' '+opt.token2
+    'auth': AUTH_SERVER+' '+opt.tokens+' '+opt.tokenc
   }));
   // 1. error? report
   proxy.on('error', (err) => {
