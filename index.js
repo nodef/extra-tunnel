@@ -287,7 +287,7 @@ function Server(px, opt) {
   const channel = opt.channel;
   const sockets = new Map();
   var bufs = [], bsz = 0;
-  var acc = false;
+  var ath = false;
 
   function socketAdd(id) {
     const soc = net.createConnection(surl.port, surl.hostname);
@@ -333,7 +333,7 @@ function Server(px, opt) {
   // 4. data? handle it
   proxy.on('data', (buf) => {
     // a. handle packets from proxy
-    if(acc) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+    if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
       if(on==='c+') socketAdd(tag);
       else if(!soc) return;
@@ -341,7 +341,7 @@ function Server(px, opt) {
       sockets.delete(tag);
       soc.destroy();
     });
-    // b. handle proxy accept/reject
+    // b. handle proxy response
     const res = httpParse(buf);
     if(res.statusCode!=='101') {
       return proxy.emit('error', `bad token for ${channel}`);
@@ -349,6 +349,7 @@ function Server(px, opt) {
     console.log(`${px} registered on ${channel}`);
     bufs.push(res.buffer.slice(res.length));
     bsz = bufs[0].length;
+    ath = true;
   });
 };
 
