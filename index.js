@@ -264,6 +264,8 @@ function Server(px, opt) {
   opt = opt||{};
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
+  opt.register = opt.register||'';
+  opt.request = opt.request||'';
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
