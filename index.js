@@ -57,7 +57,7 @@ function httpParse(buf) {
   const buffer = buf, end = str.indexOf('\r\n\r\n')+4;
   const length = Buffer.byteLength(str.substring(0, end));
   return r? {httpVersion, statusCode, status, headers, length, buffer} :
-    {method, url, httpVersion, status, statusCode, headers, length, buffer};
+    {method, url, httpVersion, headers, length, buffer};
 };
 
 function packetRead(bsz, bufs, buf, fn) {
