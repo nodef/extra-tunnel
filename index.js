@@ -260,7 +260,6 @@ function Proxy(px, opt) {
       else {
         var req = httpParse(buf);
         var ath = req.headers['user-agent']||'';
-        console.log(req);
         if(ath.startsWith(USERAGENT_SERVER)) err = onServer(id, req);
         else if(ath.startsWith(USERAGENT_CLIENT)) err = onClient(id, req);
         else err = onSocket(id);
@@ -344,7 +343,6 @@ function Server(px, opt) {
     });
     // b. handle proxy accept/reject
     const res = httpParse(buf);
-    console.log(res);
     if(res.statusCode!=='101') {
       return proxy.emit('error', `bad token for ${channel}`);
     }
