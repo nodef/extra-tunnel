@@ -32,11 +32,13 @@ function buffersConcat(bufs) {
   return bufs[0];
 };
 
-function reqParse(buf) {
+function httpParse(buf) {
   // 1. get method, url, version from top
   const str = buf.toString(), lin = str.split('\r\n');
-  const top = lin[0].split(' '), method = top[0], url = top[1];
-  const httpVersion = +top[2].substring(top[2].indexOf('/')+1);
+  const top = lin[0].split(' '), r = top[0].startsWith('HTTP');
+  const method = top[0], url = top[1], http = top[r? 0 : 2];
+  const httpVersion = +http.substring(http.indexOf('/')+1);
+  const statusCode = top[1], status = top[2];
   // 2. get headers as lowercase
   for(var h=1, H=lin.length, headers={}; h<H && lin[h]; h++) {
     var i = lin[h].indexOf(': ');
@@ -46,7 +48,8 @@ function reqParse(buf) {
   // 3. get byte length
   const buffer = buf, end = str.indexOf('\r\n\r\n')+4;
   const length = Buffer.byteLength(str.substring(0, end));
-  return {method, url, httpVersion, headers, length, buffer};
+  return r? {httpVersion, statusCode, status, headers, length, buffer} :
+    {method, url, httpVersion, status, statusCode, headers, length, buffer};
 };
 
 function packetRead(bsz, bufs, buf, fn) {
@@ -246,7 +249,7 @@ function Proxy(px, opt) {
       const mth = buf.toString('utf8', 0, 4);
       if(mth!=='HEAD') err = onSocket(id);
       else {
-        var req = reqParse(buf);
+        var req = httpParse(buf);
         var ath = req.headers['proxy-authorization']||'';
         if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
         else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
@@ -271,7 +274,7 @@ function Server(px, opt) {
   const surl = urlParse(opt.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
   const sockets = new Map();
-  var bufs = [], bsz = 0;
+  var bufs = [], bsz = 0, acc = false;
 
   function socketAdd(id) {
     const soc = net.createConnection(surl.port, surl.hostname);
@@ -315,7 +318,7 @@ function Server(px, opt) {
   });
   // 4. data? handle it
   proxy.on('data' (buf) => {
-    bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+    if(acc) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
       if(on==='c+') socketAdd(tag);
       else if(!soc) return;
@@ -323,6 +326,7 @@ function Server(px, opt) {
       socketDelete(tag);
       soc.destroy();
     });
+    const str = buf.toString();
   });
 };
 
