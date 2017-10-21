@@ -215,8 +215,7 @@ function Proxy(px, opt) {
   // 4. connection? handle it
   proxy.on('connection', (soc) => {
     // a. report connection
-    const id = ''+(idn++);
-    sockets.set(id, soc);
+    const id = socketAdd(soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
