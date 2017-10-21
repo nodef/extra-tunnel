@@ -94,8 +94,8 @@ function Proxy(px, opt) {
   px = px||'proxy';
   opt = opt||{};
   opt.proxy = opt.proxy||'80';
-  opt.tokens = opt.tokens||{};
-  opt.tokens['/'] = opt.tokens['/']||'';
+  opt.keys = opt.keys||{};
+  opt.keys['/'] = opt.keys['/']||'';
   // 2. setup proxy
   const purl = urlParse(opt.proxy);
   const proxy = net.createServer();
@@ -141,15 +141,15 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(opt.tokens[chn]!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(opt.keys[chn]!==(ath[1]||'')) return `bad key for ${chn}`;
     if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
-    console.log(`${px}:${id} ${chn} server token accepted`);
+    console.log(`${px}:${id} ${chn} server key accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
-    tokenc.set(chn, ath[2]||'');
+    tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
     // c. notify all clients
@@ -159,7 +159,7 @@ function Proxy(px, opt) {
     soc.on('close', () => {
       channels.delete(id);
       servers.delete(chn);
-      tokenc.delete(chn);
+      tokens.delete(chn);
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
     });
@@ -174,7 +174,7 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(tokenc.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
@@ -268,8 +268,8 @@ function Server(px, opt) {
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
   opt.channel = opt.channel||'/';
-  opt.tokens = opt.tokens||'';
-  opt.tokenc = opt.tokenc||'';
+  opt.key = opt.key||'';
+  opt.token = opt.token||'';
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
@@ -305,7 +305,7 @@ function Server(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': AUTH_SERVER+' '+opt.tokens+' '+opt.tokenc
+    'auth': AUTH_SERVER+' '+opt.key+' '+opt.token
   }));
   // 1. error? report
   proxy.on('error', (err) => {
