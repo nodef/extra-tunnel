@@ -138,7 +138,7 @@ function Proxy(px, opt) {
     // 3. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0);
-    // 4. data? handle it
+    // 4. data? write to client
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(clients.get(set)===chn) clientWrite(on, set, tag, body);
     }));
@@ -157,7 +157,7 @@ function Proxy(px, opt) {
     clients.set(id, chn);
     // 3. get notified, if server connected
     if(channels.has(chn)) clientWrite('c+', id, 0);
-    // 4. data? handle it
+    // 4. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
     }));
@@ -167,7 +167,7 @@ function Proxy(px, opt) {
     // 1. notify connection
     soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id);
-    // 2. data? close? notify
+    // 2. data? write to channel
     soc.on('data', (buf) => channelWrite('/', 'd+', 0, id, buf));
     soc.on('close', () => channelWrite('/', 'c-', 0, id));
   };
