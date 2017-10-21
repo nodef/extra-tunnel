@@ -122,6 +122,7 @@ function Proxy(px, opt) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
     if(soc) soc.write(packetWrite(on, set, tag, body));
+    else console.error(`${px}:${set} no server available on ${id}`);
   };
 
   function clientWrite(on, set, tag, body) {
