@@ -85,6 +85,7 @@ function packetWrite(on, set, tag, body) {
   return buf;
 };
 
+
 function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'Proxy';
@@ -249,6 +250,10 @@ function Proxy(px, opt) {
       if(err) soc.emit('error', err);
     });
   });
+};
+
+
+function Server(px, opt) {
 };
 
 
