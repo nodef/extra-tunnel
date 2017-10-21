@@ -261,6 +261,9 @@ function Proxy(px, opt) {
 function Server(px, opt) {
   // 1. setup defaults
   px = px||'server';
+  opt = opt||{};
+  opt.proxy = opt.proxy||'localhost';
+  opt.server = opt.server||'localhost:81';
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
