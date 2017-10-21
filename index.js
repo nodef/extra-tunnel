@@ -37,7 +37,7 @@ function urlParse(hrf) {
   hrf = parseInt(hrf)==hrf? 'localhost:'+hrf : hrf;
   hrf = hrf.includes('://')? hrf : 'http://'+hrf;
   const z = url.parse(hrf);
-  return Object.assign(z, {'port': z.port||80});
+  return Object.assign(z, {'port': z.port||'80'});
 };
 
 function httpParse(buf) {
