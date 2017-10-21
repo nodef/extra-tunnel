@@ -5,8 +5,8 @@ const net = require('net');
 // I. global variables
 const E = process.env;
 const A = process.argv;
-const AUTH_SERVER = 'rhost/server';
-const AUTH_CLIENT = 'rhost/client';
+const USERAGENT_SERVER = 'rhost/server';
+const USERAGENT_CLIENT = 'rhost/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
 const tokenReq = (opt) => (
   'HEAD '+opt.url+' HTTP/1.1\r\n'+
@@ -14,7 +14,7 @@ const tokenReq = (opt) => (
   'Connection: Upgrade\r\n'+
   'Host: '+opt.host+'\r\n'+
   'Origin: http://'+opt.host+'\r\n'+
-  'Authorization: '+opt.auth+'\r\n'+
+  'User-Agent: '+opt.auth+'\r\n'+
   '\r\n'
 );
 const tokenRes = () => (
@@ -149,7 +149,7 @@ function Proxy(px, opt) {
 
   function onServer(id, req) {
     // a. authenticate server
-    const chn = req.url, ath = req.headers.authorization.split(' ');
+    const chn = req.url, ath = req.headers['user-agent'].split(' ');
     if(opt.keys[chn]!==(ath[1]||'')) return `bad key for ${chn}`;
     if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
@@ -182,7 +182,7 @@ function Proxy(px, opt) {
 
   function onClient(id, req) {
     // a. authenticate client
-    const chn = req.url, ath = req.headers.authorization.split(' ');
+    const chn = req.url, ath = req.headers['user-agent'].split(' ');
     if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
@@ -259,7 +259,7 @@ function Proxy(px, opt) {
       if(mth!=='HEAD') err = onSocket(id);
       else {
         var req = httpParse(buf);
-        var ath = req.headers.authorization||'';
+        var ath = req.headers['user-agent']||'';
         console.log(req);
         if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
         else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
