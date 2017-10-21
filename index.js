@@ -93,7 +93,7 @@ function Proxy(px, opt) {
   opt.proxy = opt.proxy||'80';
   opt.channels = opt.channels||{};
   opt.channels['/'] = opt.channels['/']||'';
-  // 2. setup server
+  // 2. setup proxy
   const purl = urlParse(opt.proxy);
   const proxy = net.createServer();
   const channels = new Map();
