@@ -46,7 +46,7 @@ function httpParse(buf) {
   const top = lin[0].split(' '), r = top[0].startsWith('HTTP');
   const method = top[0], url = top[1], http = top[r? 0 : 2];
   const httpVersion = +http.substring(http.indexOf('/')+1);
-  const statusCode = top[1], status = top[2];
+  const statusCode = top[1], status = top.slice(2).join(' ');
   // 2. get headers as lowercase
   for(var h=1, H=lin.length, headers={}; h<H && lin[h]; h++) {
     var i = lin[h].indexOf(': ');
@@ -343,6 +343,7 @@ function Server(px, opt) {
     });
     // b. handle proxy accept/reject
     const res = httpParse(buf);
+    console.log(res);
     if(res.statusCode!=='101') {
       return proxy.emit('error', `bad token for ${channel}`);
     }
