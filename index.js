@@ -117,13 +117,6 @@ function Proxy(px, opt) {
   clients.set(0, '/');
   var idn = 1;
 
-  function socketAdd(soc) {
-    // a. get socket id, and add it
-    const id = idn++;
-    sockets.set(id, soc);
-    return id;
-  };
-
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
@@ -234,7 +227,8 @@ function Proxy(px, opt) {
   // 6. connection? handle it
   proxy.on('connection', (soc) => {
     // a. report connection
-    const id = socketAdd(soc);
+    const id = idn++;
+    sockets.set(id, soc);
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
