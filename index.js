@@ -259,8 +259,9 @@ function Proxy(px, opt) {
 
 
 function Server(px, opt) {
-  const url = urlParse(opt.proxy);
-  const proxy = net.createConnection(url.port, url.hostname);
+  const purl = urlParse(opt.proxy);
+  const surl = urlParse(opt.server);
+  const proxy = net.createConnection(purl.port, purl.hostname);
   const sockets = new Map();
   var bufs = [], bsz = 0;
 
