@@ -259,6 +259,8 @@ function Proxy(px, opt) {
 
 
 function Server(px, opt) {
+  // 1. setup defaults
+  px = px||'server';
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
