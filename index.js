@@ -345,5 +345,15 @@ function Server(px, opt) {
 };
 
 
-// IV. setup exports
+// IV. setup exports, commandline
 module.exports = {Proxy, Server};
+if(require.main===module) {
+  var o = {
+    'proxy': E.PROXY||E.PORT,
+    'server': E.SERVER,
+    'client': E.CLIENT,
+    'channel': E.CHANNEL,
+    'key': E.KEY,
+    'token': E.TOKEN,
+  };
+};
