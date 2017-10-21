@@ -273,6 +273,7 @@ function Server(px, opt) {
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
+  const channel = opt.channel;
   const sockets = new Map();
   var bufs = [], bsz = 0, acc = false;
 
@@ -300,7 +301,7 @@ function Server(px, opt) {
 
   // 1. register as server
   proxy.write(tokenReq({
-    'url': opt.channel,
+    'url': channel,
     'host': purl.hostname,
     'auth': AUTH_SERVER+' '+opt.register+' '+opt.request
   }));
@@ -318,6 +319,7 @@ function Server(px, opt) {
   });
   // 4. data? handle it
   proxy.on('data' (buf) => {
+    // a. handle packets from proxy
     if(acc) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
       if(on==='c+') socketAdd(tag);
@@ -326,7 +328,14 @@ function Server(px, opt) {
       socketDelete(tag);
       soc.destroy();
     });
-    const str = buf.toString();
+    // b. handle proxy accept/reject
+    const res = httpParse(buf);
+    if(res.statusCode!=='101') {
+      return proxy.emit('error', `bad token for ${channel}`);
+    }
+    console.log(`${px} registered on ${channel}`);
+    bufs.push(res.buffer.slice(res.length));
+    bsz = bufs[0].length;
   });
 };
 
