@@ -334,6 +334,7 @@ function Server(px, opt) {
   proxy.on('data', (buf) => {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+      console.log('on', on, 'set', set, 'tag', tag, 'body', body);
       const soc = sockets.get(tag);
       if(on==='c+') socketAdd(tag);
       else if(!soc) return;
