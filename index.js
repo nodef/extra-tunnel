@@ -364,7 +364,7 @@ if(require.main===module) {
     'token': E.TOKEN,
   };
   for(var i=2, I=A.length; i<I; i++) {
-    if(!A[i].startsWith('-')) mode = A[++i].toLowerCase();
+    if(!A[i].startsWith('-')) mode = A[i].toLowerCase();
     else if(A[i]==='--proxy' || A[i]==='-p') o.proxy = A[++i];
     else if(A[i]==='--server' || A[i]==='-s') o.server = A[++i];
     else if(A[i]==='--client' || A[i]==='-c') o.client = A[++i];
