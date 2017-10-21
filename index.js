@@ -205,12 +205,13 @@ function Proxy(px, opt) {
     });
   };
 
-  function onSocket(id) {
+  function onSocket(id, buf) {
     // a. notify connection
     const soc = sockets.get(id);
     if(!channels.has('/')) return `/ has no server`;
     soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id);
+    channelWrite('/', 'd+', 0, id, buf);
     // b. closed? delete and notify if exists
     soc.on('close', () => {
       if(socketDelete(id)) channelWrite('/', 'c-', 0, id);
@@ -256,13 +257,13 @@ function Proxy(px, opt) {
     soc.on('data', (buf) => {
       var err = null;
       const mth = buf.toString('utf8', 0, 4);
-      if(mth!=='HEAD') err = onSocket(id);
+      if(mth!=='HEAD') err = onSocket(id, buf);
       else {
         var req = httpParse(buf);
         var ath = req.headers['user-agent']||'';
         if(ath.startsWith(USERAGENT_SERVER)) err = onServer(id, req);
         else if(ath.startsWith(USERAGENT_CLIENT)) err = onClient(id, req);
-        else err = onSocket(id);
+        else err = onSocket(id, buf);
       }
       if(err) soc.emit('error', err);
     });
