@@ -234,7 +234,7 @@ function Proxy(px, opt) {
     // d. data? handle it
     soc.on('data', (buf) => {
       const mth = buf.toString('utf8', 0, 4);
-      if(mth==='HEAD') return onSocket(id);
+      if(mth!=='HEAD') return onSocket(id);
       var req = reqParse(buf), err = null;
       var ath = req.headers['proxy-authorization']||'';
       if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
