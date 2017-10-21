@@ -123,7 +123,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(channels.get(id));
     if(soc) return soc.write(packetWrite(on, set, tag, body));
     const err = new Error(`no server available on ${id}`);
-    console.error(`${px}:${set} error:`, err);
+    console.error(`${px}:${set}`, err);
   };
 
   function clientWrite(on, set, tag, body) {
@@ -206,7 +206,7 @@ function Proxy(px, opt) {
 
   // 3. error? report and close
   proxy.on('error', (err) => {
-    console.error(`${px} error:`, err);
+    console.error(`${px}`, err);
     proxy.close();
   });
   // 4. closed? report and close sockets
@@ -227,7 +227,7 @@ function Proxy(px, opt) {
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
-      console.error(`${px}:${id} error:`, err);
+      console.error(`${px}:${id}`, err);
     });
     // c. closed? delete
     soc.on('close', () => {
