@@ -103,13 +103,13 @@ function Proxy(px, opt) {
   var idn = 1;
 
   function channelWrite(id, on, set, tag, body) {
-    // 1. write to channel, if exists
+    // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
     if(soc) soc.write(packetWrite(on, set, tag, body));
   };
 
   function clientWrite(on, set, tag, body) {
-    // 1. write to other/root client
+    // a. write to other/root client
     const soc = sockets.get(set? set : tag);
     if(set) return soc.write(packetWrite(on, 0, tag, body));
     if(on==='d+') return soc.write(body);
@@ -118,11 +118,11 @@ function Proxy(px, opt) {
   };
 
   function onServer(id, req) {
-    // 1. authenticate server
+    // a. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
     if(opt.channels[chn]!==(ath[1]||'')) return new Error(`Bad server token for ${chn}`);
     if(channels.has(chn)) return new Error(`${chn} not available`);
-    // 2. accept server
+    // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} server token accepted`);
     const soc = sockets.get(id);
@@ -131,14 +131,14 @@ function Proxy(px, opt) {
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
-    // 3. notify all clients
+    // c. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0);
-    // 4. error? report
+    // d. error? report
     soc.on('error', (err) => {
       console.error(`${px}:${id} server error:`, err);
     });
-    // 4. closed? delete and notify clients
+    // e. closed? delete and notify clients
     soc.on('close', () => {
       console.log(`${px}:${id} server closed`);
       tokens.delete(chn);
@@ -147,53 +147,53 @@ function Proxy(px, opt) {
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
     });
-    // 5. data? write to client
+    // f. data? write to client
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(clients.get(set)===chn) clientWrite(on, set, tag, body);
     }));
   };
 
   function onClient(id, req) {
-    // 1. authenticate client
+    // a. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
     if(tokens.get(chn)!==(ath[1]||'')) return new Error(`Bad client token for ${chn}`);
-    // 2. accept client
+    // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
     const soc = sockets.get(id);
     soc.removeAllListeners();
     soc.write(tokenRes());
     clients.set(id, chn);
-    // 3. get notified, if server connected
+    // c. get notified, if server connected
     if(channels.has(chn)) clientWrite('c+', id, 0);
-    // error? report
+    // d. error? report
     soc.on('error', (err) => {
       console.error(`${px}:${id} client error:`, err);
     });
-    // closed? delete
+    // e. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} client closed`);
       clients.delete(id);
     });
-    // 4. data? write to channel
+    // f. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
     }));
   };
 
   function onSocket(id) {
-    // 1. notify connection
+    // a. notify connection
     soc.removeAllListeners();
     channelWrite('/', 'c+', 0, id);
-    // 2. error? report
+    // b. error? report
     soc.on('error', (err) => {
       console.error(`${px}:${id} socket error:`, err);
     });
-    // 3. closed? delete and notify if exists
+    // c. closed? delete and notify if exists
     soc.on('close', () => {
       if(sockets.delete(id)) channelWrite('/', 'c-', 0, id);
     });
-    // 4. data? write to channel
+    // d. data? write to channel
     soc.on('data', (buf) => {
       channelWrite('/', 'd+', 0, id, buf);
     });
