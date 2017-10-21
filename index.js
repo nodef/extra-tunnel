@@ -227,6 +227,7 @@ function Proxy(px, opt) {
     // b. error? report
     soc.on('error', (err) => {
       console.error(`${px}:${id}`, err);
+      soc.destroy();
     });
     // c. closed? delete
     soc.on('close', () => {
