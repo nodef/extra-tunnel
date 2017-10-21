@@ -166,9 +166,8 @@ function Proxy(px, opt) {
       if(ch===chn) clientWrite('c+', i, 0);
     // d. closed? delete and notify clients
     soc.on('close', () => {
-      console.log('closed in onServer');
-      channels.delete(id);
-      servers.delete(chn);
+      channels.delete(chn);
+      servers.delete(id);
       tokens.delete(chn);
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
