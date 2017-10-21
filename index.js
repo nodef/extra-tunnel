@@ -113,14 +113,13 @@ function Proxy(px, opt) {
   const clients = new Map();
   const sockets = new Map();
   const tokens = new Map();
-  const idfree = [];
   proxy.listen(purl.port);
   clients.set(0, '/');
   var idn = 1;
 
   function socketAdd(soc) {
     // a. get socket id, and add it
-    const id = idfree.length? idfree.pop() : idn++;
+    const id = idn++;
     sockets.set(id, soc);
     return id;
   };
@@ -129,7 +128,6 @@ function Proxy(px, opt) {
     // a. delete socket id, if exists
     if(!sockets.has(id)) return false;
     sockets.delete(id);
-    idfree.push(id);
     return true;
   };
 
