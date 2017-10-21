@@ -90,10 +90,11 @@ function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'Proxy';
   opt = opt||{};
-  opt.port = opt.port||80;
+  opt.proxy = opt.proxy||'80';
   opt.channels = opt.channels||{};
   opt.channels['/'] = opt.channels['/']||'';
   // 2. setup server
+  const purl = urlParse(opt.proxy);
   const proxy = net.createServer();
   const channels = new Map();
   const servers = new Map();
@@ -101,7 +102,7 @@ function Proxy(px, opt) {
   const sockets = new Map();
   const tokens = new Map();
   const idfree = [];
-  proxy.listen(opt.port);
+  proxy.listen(purl.port);
   var idn = 1;
 
   function socketAdd(soc) {
