@@ -280,6 +280,10 @@ function Server(px, opt) {
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
     });
+    // d. data? handle it
+    soc.on('data', (buf) => {
+      proxy.write(packetWrite('d+', 0, id, buf));
+    });
   };
 
   // 1. error? report
