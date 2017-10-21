@@ -99,8 +99,24 @@ function Proxy(px, opt) {
   const clients = new Map();
   const sockets = new Map();
   const tokens = new Map();
+  const idfree = [];
   proxy.listen(opt.port);
   var idn = 1;
+
+  function socketAdd(soc) {
+    // a. get socket id, and add it
+    const id = idfree.length? idfree.pop() : idn++;
+    sockets.set(id, soc);
+    return id;
+  };
+
+  function socketDelete(id) {
+    // a. delete socket id, if exists
+    if(!sockets.has(id)) return false;
+    sockets.delete(id);
+    idfree.push(id);
+    return true;
+  };
 
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
@@ -113,7 +129,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(set? set : tag);
     if(set) return soc.write(packetWrite(on, 0, tag, body));
     if(on==='d+') return soc.write(body);
-    sockets.delete(tag);
+    socketDelete(tag);
     soc.destroy();
   };
 
@@ -126,7 +142,7 @@ function Proxy(px, opt) {
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} server token accepted`);
     const soc = sockets.get(id);
-    soc.removeAllListeners();
+    soc.removeAllListeners('data');
     soc.write(tokenRes());
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
@@ -134,20 +150,15 @@ function Proxy(px, opt) {
     // c. notify all clients
     for(var [i, ch] of clients)
       if(ch===chn) clientWrite('c+', i, 0);
-    // d. error? report
-    soc.on('error', (err) => {
-      console.error(`${px}:${id} server error:`, err);
-    });
-    // e. closed? delete and notify clients
+    // d. closed? delete and notify clients
     soc.on('close', () => {
-      console.log(`${px}:${id} server closed`);
-      tokens.delete(chn);
-      servers.delete(chn);
       channels.delete(id);
+      servers.delete(chn);
+      tokens.delete(chn);
       for(var [i, ch] of clients)
         if(ch===chn) clientWrite('c-', i, 0);
     });
-    // f. data? write to client
+    // e. data? write to client
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       if(clients.get(set)===chn) clientWrite(on, set, tag, body);
     }));
@@ -161,21 +172,16 @@ function Proxy(px, opt) {
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
     const soc = sockets.get(id);
-    soc.removeAllListeners();
+    soc.removeAllListeners('data');
     soc.write(tokenRes());
     clients.set(id, chn);
     // c. get notified, if server connected
     if(channels.has(chn)) clientWrite('c+', id, 0);
-    // d. error? report
-    soc.on('error', (err) => {
-      console.error(`${px}:${id} client error:`, err);
-    });
-    // e. closed? delete
+    // d. closed? delete
     soc.on('close', () => {
-      console.log(`${px}:${id} client closed`);
       clients.delete(id);
     });
-    // f. data? write to channel
+    // e. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       channelWrite(chn, on, id, tag, body);
     }));
@@ -183,17 +189,13 @@ function Proxy(px, opt) {
 
   function onSocket(id) {
     // a. notify connection
-    soc.removeAllListeners();
+    soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id);
-    // b. error? report
-    soc.on('error', (err) => {
-      console.error(`${px}:${id} socket error:`, err);
-    });
-    // c. closed? delete and notify if exists
+    // b. closed? delete and notify if exists
     soc.on('close', () => {
-      if(sockets.delete(id)) channelWrite('/', 'c-', 0, id);
+      if(socketDelete(id)) channelWrite('/', 'c-', 0, id);
     });
-    // d. data? write to channel
+    // c. data? write to channel
     soc.on('data', (buf) => {
       channelWrite('/', 'd+', 0, id, buf);
     });
@@ -223,7 +225,7 @@ function Proxy(px, opt) {
     // c. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
-      sockets.delete(id);
+      socketDelete(id);
     });
     // d. data? handle it
     soc.on('data', (buf) => {
