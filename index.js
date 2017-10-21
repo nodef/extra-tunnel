@@ -121,9 +121,7 @@ function Proxy(px, opt) {
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
-    if(soc) soc.write(packetWrite(on, set, tag, body));
-    else console.error(`${px}:${set}`, new Error(`${id} has no server`));
-    return soc;
+    if(soc) return soc.write(packetWrite(on, set, tag, body));
   };
 
   function clientWrite(on, set, tag, body) {
@@ -138,8 +136,8 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(opt.channels[chn]!==(ath[1]||'')) return new Error(`bad token for ${chn}`);
-    if(channels.has(chn)) return new Error(`${chn} not available`);
+    if(opt.channels[chn]!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} server token accepted`);
@@ -169,7 +167,7 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(tokens.get(chn)!==(ath[1]||'')) return new Error(`bad token for ${chn}`);
+    if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
@@ -185,13 +183,14 @@ function Proxy(px, opt) {
     });
     // e. data? write to channel
     soc.on('data', (buf) => bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      if(!channelWrite(chn, on, id, tag, body)) clientWrite('c-', id, tag);
+      channelWrite(chn, on, id, tag, body);
     }));
   };
 
   function onSocket(id) {
     // a. notify connection
     const soc = sockets.get(id);
+    if(!channels.has('/')) return `/ has no server`;
     soc.removeAllListeners('data');
     channelWrite('/', 'c+', 0, id);
     // b. closed? delete and notify if exists
@@ -200,7 +199,7 @@ function Proxy(px, opt) {
     });
     // c. data? write to channel
     soc.on('data', (buf) => {
-      if(!channelWrite('/', 'd+', 0, id, buf)) soc.destroy();
+      channelWrite('/', 'd+', 0, id, buf);
     });
   };
 
@@ -236,13 +235,16 @@ function Proxy(px, opt) {
     });
     // d. data? handle it
     soc.on('data', (buf) => {
+      var err = null;
       const mth = buf.toString('utf8', 0, 4);
-      if(mth!=='HEAD') return onSocket(id);
-      var req = reqParse(buf), err = null;
-      var ath = req.headers['proxy-authorization']||'';
-      if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
-      else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
-      else return onSocket(id);
+      if(mth!=='HEAD') err = onSocket(id);
+      else {
+        var req = reqParse(buf);
+        var ath = req.headers['proxy-authorization']||'';
+        if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
+        else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
+        else err = onSocket(id);
+      }
       if(err) soc.emit('error', err);
     });
   });
