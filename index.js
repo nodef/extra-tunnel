@@ -144,8 +144,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(set? set : tag);
     if(set) return soc.write(packetWrite(on, 0, tag, body));
     if(on==='d+') return soc.write(body);
-    socketDelete(tag);
-    soc.destroy();
+    if(socketDelete(tag)) soc.destroy();
   };
 
   function onServer(id, req) {
