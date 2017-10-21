@@ -259,9 +259,13 @@ function Server(px, opt) {
   const sockets = new Map();
   var bufs = [], bsz = 0;
 
-  // 1. error, report
+  // 1. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
+  });
+  // 2. closed? report
+  proxy.on('close', () => {
+    console.log(`${px} closed`);
   });
 };
 
