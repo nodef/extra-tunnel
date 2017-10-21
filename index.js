@@ -124,13 +124,6 @@ function Proxy(px, opt) {
     return id;
   };
 
-  function socketDelete(id) {
-    // a. delete socket id, if exists
-    if(!sockets.has(id)) return false;
-    sockets.delete(id);
-    return true;
-  };
-
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
@@ -142,7 +135,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(set? set : tag);
     if(set) return soc.write(packetWrite(on, 0, tag, body));
     if(on==='d+') return soc.write(body);
-    if(socketDelete(tag)) soc.destroy();
+    if(sockets.delete(tag)) soc.destroy();
   };
 
   function onServer(id, req) {
@@ -214,7 +207,7 @@ function Proxy(px, opt) {
     channelWrite('/', 'd+', 0, id, buf);
     // b. closed? delete and notify if exists
     soc.on('close', () => {
-      if(socketDelete(id)) channelWrite('/', 'c-', 0, id);
+      if(sockets.delete(id)) channelWrite('/', 'c-', 0, id);
     });
     // c. data? write to channel
     soc.on('data', (buf) => {
@@ -251,7 +244,7 @@ function Proxy(px, opt) {
     // c. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
-      socketDelete(id);
+      sockets.delete(id);
     });
     // d. data? handle it
     soc.on('data', (buf) => {
