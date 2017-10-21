@@ -261,8 +261,8 @@ function Proxy(px, opt) {
         var req = httpParse(buf);
         var ath = req.headers['user-agent']||'';
         console.log(req);
-        if(ath.startsWith(AUTH_SERVER)) err = onServer(id, req);
-        else if(ath.startsWith(AUTH_CLIENT)) err = onClient(id, req);
+        if(ath.startsWith(USERAGENT_SERVER)) err = onServer(id, req);
+        else if(ath.startsWith(USERAGENT_CLIENT)) err = onClient(id, req);
         else err = onSocket(id);
       }
       if(err) soc.emit('error', err);
@@ -316,7 +316,7 @@ function Server(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': AUTH_SERVER+' '+opt.key+' '+opt.token
+    'auth': USERAGENT_SERVER+' '+opt.key+' '+opt.token
   }));
   // 1. error? report
   proxy.on('error', (err) => {
