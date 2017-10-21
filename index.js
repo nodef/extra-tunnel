@@ -94,8 +94,8 @@ function Proxy(px, opt) {
   px = px||'proxy';
   opt = opt||{};
   opt.proxy = opt.proxy||'80';
-  opt.channels = opt.channels||{};
-  opt.channels['/'] = opt.channels['/']||'';
+  opt.tokens = opt.tokens||{};
+  opt.tokens['/'] = opt.tokens['/']||'';
   // 2. setup proxy
   const purl = urlParse(opt.proxy);
   const proxy = net.createServer();
@@ -141,7 +141,7 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['proxy-authorization'].split(' ');
-    if(opt.channels[chn]!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(opt.tokens[chn]!==(ath[1]||'')) return `bad token for ${chn}`;
     if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
@@ -268,8 +268,8 @@ function Server(px, opt) {
   opt.proxy = opt.proxy||'localhost';
   opt.server = opt.server||'localhost:81';
   opt.channel = opt.channel||'/';
-  opt.register = opt.register||'';
-  opt.request = opt.request||'';
+  opt.token1 = opt.token1||'';
+  opt.token2 = opt.token2||'';
   // 2. setup server
   const purl = urlParse(opt.proxy);
   const surl = urlParse(opt.server);
@@ -305,7 +305,7 @@ function Server(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': AUTH_SERVER+' '+opt.register+' '+opt.request
+    'auth': AUTH_SERVER+' '+opt.token1+' '+opt.token2
   }));
   // 1. error? report
   proxy.on('error', (err) => {
