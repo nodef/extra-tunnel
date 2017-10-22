@@ -102,7 +102,7 @@ function Proxy(px, opt) {
   // 1. setup defaults
   px = px||'proxy';
   opt = opt||{};
-  opt.proxy = opt.proxy||'80';
+  opt.proxy = opt.proxy||'localhost';
   opt.keys = opt.keys||{};
   opt.keys['/'] = opt.keys['/']||'';
   // 2. setup proxy
@@ -348,6 +348,29 @@ function Server(px, opt) {
     bsz = bufs[0].length;
     ath = true;
   });
+};
+
+
+// IV. client constructor
+function Client(px, opt) {
+  // 1. setup defaults
+  px = px||'client';
+  opt = opt||{};
+  opt.proxy = opt.proxy||'localhost';
+  opt.client = opt.client||'localhost:82';
+  opt.channel = opt.channel||'/';
+  opt.token = opt.token||'';
+  opt.ping = opt.ping||8000;
+  // 2. setup client
+  const purl = urlParse(opt.proxy);
+  const curl = urlParse(opt.client);
+  const proxy = net.createConnection(purl.port, purl.hostname);
+  const client = net.createServer();
+  const channel = opt.channel;
+  const sockets = new Map();
+  client.listen(curl.port);
+  var bufs = [], bsz = 0;
+  var idn = 1, ath = false;
 };
 
 
