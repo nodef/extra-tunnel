@@ -372,6 +372,13 @@ function Client(px, opt) {
   var bufs = [], bsz = 0;
   var idn = 1, ath = false;
 
+  function proxyPing() {
+    // a. send a ping packet
+    if(proxy.destroyed) return;
+    proxy.write(packetWrite('pi', 0, 0));
+    setTimeout(proxyPing, opt.ping);
+  };
+
   // 3. register as client
   proxy.write(tokenReq({
     'url': channel,
