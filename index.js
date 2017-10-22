@@ -430,7 +430,7 @@ function Client(px, opt) {
   });
   // 11. listening? report
   client.on('listening', () => {
-    const {port, family, address} = proxy.address();
+    const {port, family, address} = client.address();
     console.log(`${px} listening on ${address}:${port} (${family})`);
   });
   // 12. connection? handle it
