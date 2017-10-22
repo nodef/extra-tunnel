@@ -7,7 +7,12 @@ also supports multiple channels, other than HTTP which enables users to access
 TCP servers, like SSH/FTP, running locally.
 
 
-# concept
+## concept
+
+The system has 3 parts:
+- **Proxy**: acts as the proxy server
+- **Server**: enables local server to be hosted through *Proxy*
+- **Client**: enables local clients to request through *Proxy*
 
 Think of the proxy like a railway line. It enables trains coming from various
 stations to pass through it, and reach their target stations. Likewise, multiple
