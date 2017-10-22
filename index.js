@@ -146,13 +146,13 @@ function Proxy(px, opt) {
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
-    // d. closed? delete and notify clients
+    // d. closed? delete clients
     soc.on('close', () => {
       channels.delete(chn);
       servers.delete(id);
       tokens.delete(chn);
       for(var [i, ch] of clients)
-        if(ch===chn) clientWrite('c-', i, 0);
+        if(i && ch===chn) sockets.get(i).destroy();
     });
     // e. data? write to client
     soc.on('data', (buf) => {
