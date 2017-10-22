@@ -1,11 +1,15 @@
 {
   "name": "rhost",
-  "version": "0.0.330",
+  "version": "0.0.331",
   "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
+    "install": "node install",
     "start": "node ./",
     "test": "exit"
+  },
+  "bin": {
+    "rhost": "index.cmd"
   },
   "repository": {
     "type": "git",
