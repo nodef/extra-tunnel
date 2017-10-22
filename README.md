@@ -99,26 +99,106 @@ $ rhost proxy
 ```
 
 ```bash
-# start server to Proxy on rhost.herokuapp.com to local server on port 8080
-$ rhost server -p rhost.herokuapp.com --server localhost:8080
+# start server to Proxy on rhost.herokuapp.com to local server on channel '/'
+$ rhost server -p rhost.herokuapp.com --server localhost:8080 -- channel /
 
-# start server to Proxy with client token '1234'
+# start server to Proxy with client token '1234' on channel '/'
 $ rhost server -p rhost.herokuapp.com -s 8080 -t 1234
 
-# start server to Proxy with channel key 'abcd'
-$ rhost server -p rhost.herokuapp.com -s 8080 -k abcd -t 1234
+# start server to Proxy with channel key 'abcd' on channel '/ssh'
+$ rhost server -p rhost.herokuapp.com -s 22 -n /ssh -k abcd -t 1234
 ```
 
 ```bash
-# start client to Proxy on rhost.herokuapp.com with as local server on port 9090
-$ rhost client -p rhost.herokuapp.com --client localhost:9090
+# start client to Proxy on rhost.herokuapp.com with local server to channel '/'
+$ rhost client -p rhost.herokuapp.com --client localhost:9090 --channel '/'
 
-# start client to Proxy with client token '1234'
-$ rhost client -p rhost.herokuapp.com -c 9090 -t 1234
+# start client to Proxy with client token '1234' to channel '/ssh'
+$ rhost client -p rhost.herokuapp.com -c 22 -n '/ssh' -t 1234
 ```
 
 ### javascript
 
-```bash
+```javascript
+const rhost = require('rhost');
 
+rhost.<Mode>([<prefix>], [<options>]);
+// Mode: this is Proxy, Server, or Client
+// prefix: name of Proxy in logs
+// the following options are accepted (object)
+// proxy: address of proxy ('localhost')
+// server: address of server ('localhost:81')
+// client: address of client ('localhost:82')
+// keys: keys for each allowed channel ({'/': ''})
+// channel: channel to register/subscribe ('/')
+// key: key for registering server ('')
+// token: token for subscribing client ('')
+// ping: ping-pong period (8000)
+```
+
+```javascript
+// start proxy on port 3212
+rhost.Proxy(null, {
+  'proxy': 'localhost:3212'
+});
+
+// start proxy on port 80 with name 'Thug'
+rhost.Proxy('Thug', {
+  'proxy': '80'
+});
+
+// start Proxy on port 80
+rhost.Proxy();
+
+// start Proxy on env PORT with a few channel keys
+rhost.Proxy(null, {
+  'proxy': process.env.PORT
+  'keys': {
+    '/': 'newhttpchannelkey'
+    '/ssh': 'newsshchannelkey'
+  }
+})
+```
+
+```javascript
+// start server to Proxy on rhost.herokuapp.com to local server on channel '/'
+rhost.Server(null, {
+  'proxy': 'rhost.herokuapp.com',
+  'server': 'localhost:8080',
+  'channel': '/'
+});
+
+// start server to Proxy with client token '1234' on channel '/'
+rhost.Server('ThugServer', {
+  'proxy': 'rhost.herokuapp.com',
+  'server': '8080',
+  'token': '1234'
+});
+
+// start server to Proxy with channel key 'abcd' on channel '/ssh'
+rhost.Server(null, {
+  'proxy': 'rhost.herokuapp.com',
+  'server': '22',
+  'key': 'abcd',
+  'token': '1234',
+  'ping': 8000
+});
+```
+
+```javascript
+// start client to Proxy on rhost.herokuapp.com with local server to channel '/'
+rhost.Client(null, {
+  'proxy': 'rhost.herokuapp.com',
+  'client': 'localhost:9090',
+  'channel': '/'
+});
+
+// start client to Proxy with client token '1234' to channel '/ssh'
+rhost.Client('ThugClient', {
+  'proxy': 'rhost.herokuapp.com',
+  'client': '22',
+  'channel': '/ssh'
+  'token': '1234',
+  'ping': 8000
+});
 ```
