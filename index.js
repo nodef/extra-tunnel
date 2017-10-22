@@ -438,6 +438,7 @@ function Client(px, opt) {
     // a. report connection
     const id = idn++;
     sockets.set(id, soc);
+    proxy.write(packetWrite('c+', 0, id));
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
