@@ -145,9 +145,6 @@ function Proxy(px, opt) {
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
-    // c. notify all clients
-    for(var [i, ch] of clients)
-      if(ch===chn) clientWrite('c+', i, 0);
     // d. closed? delete and notify clients
     soc.on('close', () => {
       channels.delete(chn);
