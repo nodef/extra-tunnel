@@ -416,24 +416,24 @@ function Client(px, opt) {
     ath = true;
   });
 
-  // 3. error? report and close
+  // 9. error? report and close
   client.on('error', (err) => {
     console.error(`${px}`, err);
     client.close();
   });
-  // 4. closed? report and close sockets, proxy
+  // 10. closed? report and close sockets, proxy
   client.on('close', () => {
     console.log(`${px} closed`);
     if(!proxy.destroyed) proxy.destroy();
     for(var [i, soc] of sockets)
       soc.destroy();
   });
-  // 5. listening? report
+  // 11. listening? report
   client.on('listening', () => {
     const {port, family, address} = proxy.address();
     console.log(`${px} listening on ${address}:${port} (${family})`);
   });
-  // 6. connection? handle it
+  // 12. connection? handle it
   client.on('connection', (soc) => {
     // a. report connection
     const id = idn++;
