@@ -142,7 +142,6 @@ function Proxy(px, opt) {
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
-    console.log(`token: "${ath[2]||''}"`);
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
@@ -166,7 +165,6 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['user-agent'].split(' ');
-    console.log(`expect: "${tokens.get(chn)}", is: "${ath[1]||''}"`);
     if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
