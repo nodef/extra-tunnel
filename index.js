@@ -371,6 +371,13 @@ function Client(px, opt) {
   client.listen(curl.port);
   var bufs = [], bsz = 0;
   var idn = 1, ath = false;
+
+  // 3. register as client
+  proxy.write(tokenReq({
+    'url': channel,
+    'host': purl.hostname,
+    'auth': USERAGENT_CLIENT+' '+opt.token
+  }));
 };
 
 
