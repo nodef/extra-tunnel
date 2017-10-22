@@ -378,6 +378,8 @@ function Client(px, opt) {
     'host': purl.hostname,
     'auth': USERAGENT_CLIENT+' '+opt.token
   }));
+  // 4. try to keep connection alive
+  setTimeout(proxyPing, opt.ping);
 };
 
 
