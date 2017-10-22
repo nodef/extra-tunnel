@@ -126,6 +126,7 @@ function Proxy(px, opt) {
   function clientWrite(on, set, tag, body) {
     // a. write to other/root client
     const soc = sockets.get(set? set : tag);
+    if(!soc) return;
     if(set) return soc.write(packetWrite(on, 0, tag, body));
     if(on==='d+') return soc.write(body);
     if(sockets.delete(tag)) soc.destroy();
@@ -389,8 +390,10 @@ function Client(px, opt) {
   });
   // 6. closed? report
   proxy.on('close', () => {
-    console.log(`${px} closed`);
-    if(client.listening) client.close();
+    proxy.destroy();
+    for(var [i, soc] of sockets)
+      soc.destroy();
+    client.close();
   });
   // 7. connected? report
   proxy.on('connect', () => {
@@ -418,15 +421,12 @@ function Client(px, opt) {
 
   // 9. error? report and close
   client.on('error', (err) => {
-    console.error(`${px}`, err);
     client.close();
   });
-  // 10. closed? report and close sockets, proxy
+  // 10. closed? report and close proxy, sockets
   client.on('close', () => {
-    console.log(`${px} closed`);
+    console.error(`${px}`, err);
     if(!proxy.destroyed) proxy.destroy();
-    for(var [i, soc] of sockets)
-      soc.destroy();
   });
   // 11. listening? report
   client.on('listening', () => {
