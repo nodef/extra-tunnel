@@ -1,10 +1,11 @@
 # rhost
 
-A proxying system, where the proxy acts both as a middle-man and an HTTP server.
-This enables users to access an HTTP server running locally, through a public-ip
-proxy server, which can be hosted on a cloud server, like [Heroku]. The proxy
-also supports multiple channels, other than HTTP which enables users to access
-TCP servers, like SSH/FTP, running locally.
+A proxying system, where the *proxy* acts both as a *middle-man* and an
+*HTTP server*. This enables *users* to access an HTTP server running
+**locally**, through a *public-ip proxy server*, which can be hosted on a
+*cloud server*, like *[Heroku]*. The proxy also supports **channels**, other
+than HTTP which enables users to access *TCP servers*, like *SSH/FTP*,
+running locally.
 
 
 ## concept
