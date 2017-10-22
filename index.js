@@ -458,7 +458,7 @@ function Client(px, opt) {
 
 
 // IV. setup exports, commandline
-module.exports = {Proxy, Server};
+module.exports = {Proxy, Server, Client};
 if(require.main===module) {
   var mode = 'proxy', o = {
     'proxy': E.PROXY||E.PORT,
