@@ -390,6 +390,7 @@ function Client(px, opt) {
   // 6. closed? report
   proxy.on('close', () => {
     console.log(`${px} closed`);
+    client.close();
   });
   // 7. connected? report
   proxy.on('connect', () => {
