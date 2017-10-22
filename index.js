@@ -452,7 +452,7 @@ function Client(px, opt) {
     // c. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
-      sockets.delete(id);
+      if(sockets.delete(id)) proxy.write(packetWrite('c-', 0, id));
     });
     // d. data? handle it
     soc.on('data', (buf) => {
