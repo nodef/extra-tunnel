@@ -438,6 +438,23 @@ function Client(px, opt) {
     const {port, family, address} = proxy.address();
     console.log(`${px} listening on ${address}:${port} (${family})`);
   });
+  // 6. connection? handle it
+  client.on('connection', (soc) => {
+    // a. report connection
+    const id = idn++;
+    sockets.set(id, soc);
+    console.log(`${px}:${id} connected`);
+    // b. error? report
+    soc.on('error', (err) => {
+      console.error(`${px}:${id}`, err);
+      soc.destroy();
+    });
+    // c. closed? delete
+    soc.on('close', () => {
+      console.log(`${px}:${id} closed`);
+      sockets.delete(id);
+    });
+  });
 };
 
 
