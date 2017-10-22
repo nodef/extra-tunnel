@@ -142,6 +142,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
+    console.log(`token: "${ath[2]||''}"`);
     tokens.set(chn, ath[2]||'');
     channels.set(chn, id);
     servers.set(id, chn);
