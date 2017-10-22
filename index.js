@@ -390,7 +390,7 @@ function Client(px, opt) {
   // 6. closed? report
   proxy.on('close', () => {
     console.log(`${px} closed`);
-    client.close();
+    if(client.listening) client.close();
   });
   // 7. connected? report
   proxy.on('connect', () => {
@@ -425,9 +425,9 @@ function Client(px, opt) {
   // 4. closed? report and close sockets, proxy
   client.on('close', () => {
     console.log(`${px} closed`);
+    if(!proxy.destroyed) proxy.destroy();
     for(var [i, soc] of sockets)
       soc.destroy();
-    proxy.destroy();
   });
   // 5. listening? report
   client.on('listening', () => {
