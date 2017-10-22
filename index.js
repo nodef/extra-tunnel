@@ -279,15 +279,15 @@ function Server(px, opt) {
     sockets.set(tag, soc);
     // a. error? report
     soc.on('error', (err) => {
-      console.error(`${px}:${tag}`, err);
+      console.error(`${px}:${set}.${tag}`, err);
     });
     // b. connected? report
     soc.on('connect', (err) => {
-      console.log(`${px}:${tag} connected to ${opt.server}`);
+      console.log(`${px}:${set}.${tag} connected to ${opt.server}`);
     });
     // c. closed? report
     soc.on('close', () => {
-      console.log(`${px}:${tag} closed`);
+      console.log(`${px}:${set}.${tag} closed`);
       if(sockets.has(tag)) proxy.write(packetWrite('c-', set, tag));
     });
     // d. data? handle it
