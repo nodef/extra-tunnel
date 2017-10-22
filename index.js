@@ -401,8 +401,7 @@ function Client(px, opt) {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
-      if(on==='c+') return socketAdd(tag);
-      else if(!soc) return;
+      if(!soc) return;
       if(on==='d+') return soc.write(body);
       if(sockets.delete(tag)) soc.destroy();
     });
