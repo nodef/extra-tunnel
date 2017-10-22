@@ -157,6 +157,7 @@ function Proxy(px, opt) {
     // e. data? write to client
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        console.log(chn, on, set, tag, body);
         if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
       });
@@ -292,6 +293,7 @@ function Server(px, opt) {
     });
     // d. data? handle it
     soc.on('data', (buf) => {
+      console.log('d+', 0, id, buf);
       proxy.write(packetWrite('d+', 0, id, buf));
     });
   };
@@ -392,7 +394,6 @@ function Client(px, opt) {
   });
   // 6. closed? report
   proxy.on('close', () => {
-    console.log(`${px}-proxy closed`);
     proxy.destroy();
     for(var [i, soc] of sockets)
       soc.destroy();
@@ -406,6 +407,7 @@ function Client(px, opt) {
   proxy.on('data', (buf) => {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+      console.log(on, set, tag, body);
       const soc = sockets.get(tag);
       if(!soc) return;
       if(on==='d+') return soc.write(body);
