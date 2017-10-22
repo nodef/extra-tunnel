@@ -1,6 +1,6 @@
 {
   "name": "rhost",
-  "version": "0.0.331",
+  "version": "0.0.332",
   "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,8 @@
     "url": "git+https://github.com/nodef/rhost.git"
   },
   "keywords": [
+    "remote",
+    "host",
     "reverse",
     "proxy"
   ],
