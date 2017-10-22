@@ -1,6 +1,6 @@
 {
   "name": "rhost",
-  "version": "0.0.334",
+  "version": "0.0.335",
   "description": "Host Web Server from a non-public IP.",
   "main": "index.js",
   "scripts": {
@@ -17,9 +17,7 @@
   },
   "keywords": [
     "remote",
-    "host",
-    "reverse",
-    "proxy"
+    "host"
   ],
   "author": "wolfram77@gmail.com",
   "license": "MIT",
