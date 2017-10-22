@@ -315,6 +315,8 @@ function Server(px, opt) {
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
     proxy.destroy();
+    for(var [i, soc] of sockets)
+      soc.destroy();
   });
   // 6. closed? report
   proxy.on('close', () => {
@@ -390,10 +392,11 @@ function Client(px, opt) {
   });
   // 6. closed? report
   proxy.on('close', () => {
+    console.log(`${px}-proxy closed`);
     proxy.destroy();
     for(var [i, soc] of sockets)
       soc.destroy();
-    client.close();
+    if(client.listening) client.close();
   });
   // 7. connected? report
   proxy.on('connect', () => {
@@ -421,11 +424,12 @@ function Client(px, opt) {
 
   // 9. error? report and close
   client.on('error', (err) => {
+    console.error(`${px}`, err);
     client.close();
   });
   // 10. closed? report and close proxy, sockets
   client.on('close', () => {
-    console.error(`${px}`, err);
+    console.log(`${px} closed`);
     if(!proxy.destroyed) proxy.destroy();
   });
   // 11. listening? report
