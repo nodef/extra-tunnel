@@ -157,7 +157,6 @@ function Proxy(px, opt) {
     // e. data? write to client
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-        console.log(chn, on, set, tag, body);
         if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
       });
@@ -182,7 +181,6 @@ function Proxy(px, opt) {
     // e. data? write to channel
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-        console.log('client.writes', on, id, tag, body);
         if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         channelWrite(chn, on, id, tag, body);
       });
@@ -294,7 +292,6 @@ function Server(px, opt) {
     });
     // d. data? handle it
     soc.on('data', (buf) => {
-      console.log('d+', 0, tag, buf);
       proxy.write(packetWrite('d+', set, tag, buf));
     });
   };
@@ -408,7 +405,6 @@ function Client(px, opt) {
   proxy.on('data', (buf) => {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-      console.log(on, set, tag, body);
       const soc = sockets.get(tag);
       if(!soc) return;
       if(on==='d+') return soc.write(body);
