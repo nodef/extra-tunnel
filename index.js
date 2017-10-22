@@ -380,6 +380,19 @@ function Client(px, opt) {
   }));
   // 4. try to keep connection alive
   setTimeout(proxyPing, opt.ping);
+  // 5. error? report
+  proxy.on('error', (err) => {
+    console.error(`${px}`, err);
+    proxy.destroy();
+  });
+  // 6. closed? report
+  proxy.on('close', () => {
+    console.log(`${px} closed`);
+  });
+  // 7. connected? report
+  proxy.on('connect', () => {
+    console.log(`${px} connected to ${opt.proxy}`);
+  });
 };
 
 
