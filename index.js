@@ -454,6 +454,10 @@ function Client(px, opt) {
       console.log(`${px}:${id} closed`);
       sockets.delete(id);
     });
+    // d. data? handle it
+    soc.on('data', (buf) => {
+      proxy.write(packetWrite('d+', 0, id, buf));
+    });
   });
 };
 
