@@ -52,6 +52,10 @@ to *channel* `/`, but this is **unnecessary** since you can directly request
 the *Proxy* server instead.
 
 
+## usage
+
+### Proxy
+
 This is how a server connects:
 - A server connects to the proxy.
 - It then registers to a channel with a key, and a token.
