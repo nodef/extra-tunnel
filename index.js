@@ -176,8 +176,6 @@ function Proxy(px, opt) {
     soc.removeAllListeners('data');
     soc.write(tokenRes());
     clients.set(id, chn);
-    // c. get notified, if server connected
-    if(channels.has(chn)) clientWrite('c+', id, 0);
     // d. closed? delete
     soc.on('close', () => {
       clients.delete(id);
