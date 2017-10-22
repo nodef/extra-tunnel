@@ -182,6 +182,7 @@ function Proxy(px, opt) {
     // e. data? write to channel
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+        console.log('client.writes', on, id, tag, body);
         if(on==='pi') return soc.write(packetWrite('po', 0, 0));
         channelWrite(chn, on, id, tag, body);
       });
@@ -275,26 +276,26 @@ function Server(px, opt) {
   var bufs = [], bsz = 0;
   var ath = false;
 
-  function socketAdd(id) {
+  function socketAdd(set, tag) {
     const soc = net.createConnection(surl.port, surl.hostname);
-    sockets.set(id, soc);
+    sockets.set(tag, soc);
     // a. error? report
     soc.on('error', (err) => {
-      console.error(`${px}:${id}`, err);
+      console.error(`${px}:${tag}`, err);
     });
     // b. connected? report
     soc.on('connect', (err) => {
-      console.log(`${px}:${id} connected to ${opt.server}`);
+      console.log(`${px}:${tag} connected to ${opt.server}`);
     });
     // c. closed? report
     soc.on('close', () => {
-      console.log(`${px}:${id} closed`);
-      if(sockets.has(id)) proxy.write(packetWrite('c-', 0, id));
+      console.log(`${px}:${tag} closed`);
+      if(sockets.has(tag)) proxy.write(packetWrite('c-', set, tag));
     });
     // d. data? handle it
     soc.on('data', (buf) => {
-      console.log('d+', 0, id, buf);
-      proxy.write(packetWrite('d+', 0, id, buf));
+      console.log('d+', 0, tag, buf);
+      proxy.write(packetWrite('d+', set, tag, buf));
     });
   };
 
@@ -333,7 +334,7 @@ function Server(px, opt) {
     // a. handle packets from proxy
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
-      if(on==='c+') return socketAdd(tag);
+      if(on==='c+') return socketAdd(set, tag);
       else if(!soc) return;
       if(on==='d+') return soc.write(body);
       if(sockets.delete(tag)) soc.destroy();
