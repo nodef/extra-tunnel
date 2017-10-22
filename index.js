@@ -341,7 +341,7 @@ function Server(px, opt) {
     // b. handle proxy response
     const res = httpParse(buf);
     if(res.statusCode!=='101') {
-      return proxy.emit('error', `bad token for ${channel}`);
+      return proxy.emit('error', `bad key for ${channel}`);
     }
     console.log(`${px} registered on ${channel}`);
     bufs.push(res.buffer.slice(res.length));
@@ -392,6 +392,26 @@ function Client(px, opt) {
   // 7. connected? report
   proxy.on('connect', () => {
     console.log(`${px} connected to ${opt.proxy}`);
+  });
+  // 8. data? handle it
+  proxy.on('data', (buf) => {
+    // a. handle packets from proxy
+    if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
+      const soc = sockets.get(tag);
+      if(on==='c+') return socketAdd(tag);
+      else if(!soc) return;
+      if(on==='d+') return soc.write(body);
+      if(sockets.delete(tag)) soc.destroy();
+    });
+    // b. handle proxy response
+    const res = httpParse(buf);
+    if(res.statusCode!=='101') {
+      return proxy.emit('error', `bad token for ${channel}`);
+    }
+    console.log(`${px} subscribed to ${channel}`);
+    bufs.push(res.buffer.slice(res.length));
+    bsz = bufs[0].length;
+    ath = true;
   });
 };
 
