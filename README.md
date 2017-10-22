@@ -54,25 +54,71 @@ the *Proxy* server instead.
 
 ## usage
 
-### Proxy
+`rhost` can be used both as a command-line program, and as a Javascript
+function. As of now, *keys* or *tokens* cannot contain spaces, and it
+is not possible to set *keys* of *channels*.
 
-This is how a server connects:
-- A server connects to the proxy.
-- It then registers to a channel with a key, and a token.
-- If key for the channel is valid, the server is accepted.
-- Any requests on the channel are forwarded to this server.
+## command-line
 
-This is how a client connects:
-- A client connects to the proxy.
-- It then subscribes to a channel with the token provided by server.
-- If token for the channel is valid, the client is accepted.
-- All request are forwarded to the channel.
+```bash
+# install globally
+$ npm install -g rhost
+```
 
-This is how users can access access your HTTP server:
-- The proxy acts as a permanent client to channel '/'.
-- Any HTTP requests it recieves are forwarded to channel '/'.
-- Host the HTTP server on your computer on any port.
-- Create a server that uses the HTTP server as its **server**.
-- Register server to channel '/', and the HTTP server will receive requests.
+```bash
+$ rhost [<mode>] [options]
+# mode: this is 'proxy', 'server', or 'client'
+# -p | --proxy: address of proxy
+# -s | --server: address of server
+# -c | --client: address of client
+# -n | --channel: channel to register/subscribe
+# -k | --key: key for registering server
+# -t | --token: token for subscribing client
+# environment variables are also accepted
+# PORT: port number for proxy
+# PROXY: address of proxy
+# SERVER: address of server
+# CLIENT: address of client
+# CHANNEL: channel to register/subscribe
+# KEY: key for registering server
+# TOKEN: token for subscribing client
+```
 
-This is how you can make SSH server accessible through proxy:
+```bash
+# start proxy on port 3212
+$ rhost proxy --proxy localhost:3212
+
+# start proxy on port 80
+$ rhost proxy -p localhost
+
+# start Proxy on port 80
+$ rhost proxy -p 80
+
+# start Proxy on env PORT
+$ rhost proxy
+```
+
+```bash
+# start server to Proxy on rhost.herokuapp.com to local server on port 8080
+$ rhost server -p rhost.herokuapp.com --server localhost:8080
+
+# start server to Proxy with client token '1234'
+$ rhost server -p rhost.herokuapp.com -s 8080 -t 1234
+
+# start server to Proxy with channel key 'abcd'
+$ rhost server -p rhost.herokuapp.com -s 8080 -k abcd -t 1234
+```
+
+```bash
+# start client to Proxy on rhost.herokuapp.com with as local server on port 9090
+$ rhost client -p rhost.herokuapp.com --client localhost:9090
+
+# start client to Proxy with client token '1234'
+$ rhost client -p rhost.herokuapp.com -c 9090 -t 1234
+```
+
+### javascript
+
+```bash
+
+```
