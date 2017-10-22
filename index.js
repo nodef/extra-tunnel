@@ -394,7 +394,7 @@ function Client(px, opt) {
   proxy.on('close', () => {
     proxy.destroy();
     for(var [i, soc] of sockets)
-      soc.destroy();
+      sockets.delete(i) && soc.destroy();
     if(client.listening) client.close();
   });
   // 7. connected? report
