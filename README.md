@@ -2,6 +2,8 @@
 
 [![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
 
+![rhost](http://oi63.tinypic.com/2uqm5bl.jpg]
+
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
 **locally**, through a *public-ip proxy server*, which can be hosted on a
