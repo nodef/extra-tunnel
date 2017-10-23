@@ -2,7 +2,6 @@
 
 [![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
 
-![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
@@ -10,6 +9,8 @@ A proxying system, where the *proxy* acts both as a *middle-man* and an
 *cloud server*, like *[Heroku]*. The proxy also supports **channels**, other
 than HTTP which enables users to access *TCP servers*, like *SSH/FTP*,
 running locally.
+
+![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
 ## concept
