@@ -35,9 +35,9 @@ ask questions to their *class teacher*.
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
-## Usage
+## Setup
 
-### Setup Proxy
+### Proxy
 
 In order to start, we need a *Proxy* first. Let's set it up:
 1. Get *Proxy* to your [GitHub].
@@ -50,7 +50,7 @@ In order to start, we need a *Proxy* first. Let's set it up:
     4. In *Connect to GitHub*, type in *rhost* and *Connect*.
     5. In *Manual Deploy*, *Deploy Branch* when *master* is selected.
 
-### Setup Server/Client
+### Server/Client
 
 ```bash
 # to use from command line
@@ -59,6 +59,9 @@ npm install -g rhost
 # to use from node.js
 npm install rhost
 ```
+
+
+## Usage
 
 ### Command Line
 
