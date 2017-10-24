@@ -68,10 +68,11 @@ npm install rhost
 
 ### Host local HTTP server
 
-Assuming your [Heroku] app name is `proxywebapp`, and your local server is
+Assuming your [Heroku] app name is `proxywebapp`, and your local HTTP server is
 running on port 80. The following command starts up a *Server*, which acts as a
 bridge between your local server `localhost:80` and the *Proxy* `proxywebapp`.
-Try opening `https://proxywebapp.herokuapp.com`, after this command.
+Try opening `https://proxywebapp.herokuapp.com` in your browser, after running
+this command.
 
 ```bash
 rhost server --proxy proxywebapp.herokuapp.com --server 80
@@ -79,14 +80,39 @@ rhost server --proxy proxywebapp.herokuapp.com --server 80
 
 ### Host local SSH server
 
-Assuming your [Heroku] app name is `proxywebapp`, and your local SSH server is
-running on port 22. The following command starts up a *Server*, which acts as a
-bridge between your local server `localhost:22` and the *Proxy* `proxywebapp`,
-on *channel* `/ssh`.
+All *channels* other than default `/` for HTTP are disabled by default. Lets
+enable it first by going to *Proxy* setting on [Heroku]:
+1. Goto [Heroku dashboard], and then choose *Settings* tab.
+2. In *Config Variables*, we need to add one, so select *Reveal Config Vars*.
+3. Set *Key* as `KEYS_SSH`, and *Value* as `admin` (or whatever you want).
+4. Select *Add*, this restarts the app with new config.
+5. You can see app logs at *More -> View Logs*.
+
+Now that we have setup the key for `/ssh` *channel*, it is enabled and we are
+ready to setup the server. Assuming your [Heroku] app name is `proxywebapp`,
+and your local SSH server is running on port 22. The following command starts
+up a *Server*, which acts as a bridge between your local server `localhost:22`
+and the *Proxy* `proxywebapp`, on *channel* `/ssh`.
 
 ```bash
-rhost server -p proxywebapp.herokuapp.com -s 22 --channel /ssh
+rhost server -p proxywebapp.herokuapp.com -s 22 --channel /ssh --key admin
 ```
+
+The common use of SSH is to access the terminal of a remote computer. In our
+case, since we are using *Proxy*, we would now be able to access it, not just
+from LAN, but from anywhere in the world (with an internet connection). Unlike
+HTTP however, *Proxy* is unable to act as an SSH server and hence you cannot
+connect directly to it with your SSH client.
+
+To solve this problem, we have a *Client*. Any number of *Clients* can connect
+to a *channel* on the *Proxy*. So, on a separate machine, install [rhost] using
+the command `npm install -g rhost`, and then start *Client* using the following
+command:
+
+```bash
+rhost client -p proxywebapp.herokuapp.com -c 22 -n /ssh
+```
+
 
 ### Command Line
 
