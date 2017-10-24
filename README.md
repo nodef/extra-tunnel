@@ -2,7 +2,6 @@
 
 [![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
 
-
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
 **locally**, through a *public-ip proxy server*, which can be hosted on a
@@ -207,3 +206,5 @@ rhost.Client('ThugClient', {
   'ping': 8000
 });
 ```
+
+[Heroku]: http://www.heroku.com
