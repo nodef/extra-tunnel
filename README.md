@@ -48,10 +48,6 @@ npm install rhost
 
 ## usage
 
-`rhost` can be used both as a command-line program, and as a Javascript
-function. As of now, *keys* or *tokens* cannot contain spaces, and it
-is not possible to set *keys* of *channels*.
-
 ## command-line
 
 ```bash
