@@ -239,5 +239,7 @@ to *channel* `/`, but this is **unnecessary** since you can directly request
 the *Proxy* server instead.
 
 
-[GitHub]: https://www.github.com
+[GitHub]: https://github.com
 [Heroku]: https://www.heroku.com
+[rhost]: https://github.com/nodef/rhost
+[Heroku dashboard]: https://dashboard.heroku.com/apps
