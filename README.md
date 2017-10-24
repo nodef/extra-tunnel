@@ -54,6 +54,7 @@ In order to start, we need a *Proxy* first. Let's set it up:
 
 We need to install [rhost] locally in order to use it as *Server* or *Client*
 (a private-ip *Proxy* would only be useful in testing).
+
 ```bash
 # to use from command line
 npm install -g rhost
@@ -64,6 +65,18 @@ npm install rhost
 
 
 ## Usage
+
+### Host local HTTP server
+
+Assuming you [Heroku] app name is `proxywebapp`, and your local server is
+running on port 80. The following command starts up a *Server*, which acts as a
+bridge between your local server `localhost:80` and the *Proxy* `proxywebapp`.
+Try opening `https://proxywebapp.herokuapp.com`, after this command.
+
+```bash
+rhost server --proxy proxywebapp.herokuapp.com --server 80
+```
+
 
 ### Command Line
 
