@@ -3,8 +3,6 @@ const url = require('url');
 const net = require('net');
 
 // I. global variables
-const E = process.env;
-const A = process.argv;
 const USERAGENT_SERVER = 'rhost/server';
 const USERAGENT_CLIENT = 'rhost/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
@@ -466,6 +464,8 @@ function Client(px, opt) {
 // IV. setup exports, commandline
 module.exports = {Proxy, Server, Client};
 if(require.main===module) {
+  const E = process.env;
+  const A = process.argv;
   var mode = 'proxy', o = {
     'proxy': E.PROXY||E.PORT,
     'server': E.SERVER,
