@@ -35,7 +35,9 @@ ask questions to their *class teacher*.
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
-## install
+## usage
+
+### install
 
 ```bash
 # to use from command line
