@@ -9,11 +9,6 @@ A proxying system, where the *proxy* acts both as a *middle-man* and an
 than HTTP which enables users to access *TCP servers*, like *SSH/FTP*,
 running locally.
 
-![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
-
-
-## concept
-
 The system has 3 parts:
 - **Proxy**: acts as the proxy server
 - **Server**: enables local server to be hosted through *Proxy*
@@ -24,6 +19,11 @@ multiple *classrooms*. Each *channel* has a *Server*, like each classroom has a
 *class teacher*.. Any number of *Clients* can connect to a *channel* and send
 requests to the *Server*, and so can any number of *students* in a *classroom*
 ask questions to their *class teacher*.
+
+![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
+
+
+## working
 
 ### Proxy
 
