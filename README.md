@@ -9,7 +9,9 @@
 </pre>
 </b>
 <p align="center">
-[![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
+  <a href="https://nodei.co/npm/rhost/">
+    <img alt="NPM" src="https://nodei.co/npm/rhost.png">
+  </a>
 </p>
 
 A proxying system, where the *proxy* acts both as a *middle-man* and an
