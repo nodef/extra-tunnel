@@ -46,10 +46,11 @@ In order to start, we need a *Proxy* first. Let's set it up:
 2. Create *Proxy* application in cloud.
     1. Create an account on [Heroku].
     2. On [Heroku dashboard], create a new app, like `proxywebapp`.
+    3. Select the *Deploy* tab, and the choose *GitHub* as deployment method.
+    4. In *Connect to GitHub*, type in *rhost* and *Connect*.
+    5. In *Manual Deploy*, *Deploy Branch* when *master* is selected.
 
-
-
-### Install
+### Setup Server/Client
 
 ```bash
 # to use from command line
@@ -60,12 +61,6 @@ npm install rhost
 ```
 
 ### Command Line
-
-#### Host local HTTP server
-
-```bash
-
-```
 
 ```bash
 $ rhost [<mode>] [options]
