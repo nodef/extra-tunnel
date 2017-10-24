@@ -35,39 +35,6 @@ ask questions to their *class teacher*.
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
-## working
-
-### Proxy
-
-It acts as a server on a single port, and manages communication between
-*Clients* and *Servers* through *channels*. Each *Server* registers to a unique
-*channel* (like `/` or `/ssh`), and any number of *Clients* can then connect to
-the *Proxy* on that *channel*. The *Proxy* also itself acts as a client on
-*channel* `/` forwarding any HTTP requests it receives on its port to the
-*Server* registered to *channel* `/`.
-
-### Server
-
-It connects to the *Proxy*, and registers to a unique *channel* using a *key*
-and a *token*. The *key* must match the one stored on the *Proxy* for that
-*channel*. Once registered, the *token* is used to accept *Clients*. *Server*
-then acts a multiple local clients for forwarding requests to local server from
-specified *channel*, thus making you **feel** as if the *Clients* are running
-locally (even if its not). A *Server* registered to *channel* `/` will also
-receive *HTTP requests* from *Proxy*, becuase *Proxy* also acts as a *Client*
-to *channel* `/`.
-
-### Client
-
-It connects to the *Proxy*, and subscribes to a *channel* using a *token*. This
-*token* must match the one provided by the *Server* registered to this
-*channel*. *Client* then acts as a local server for forwarding requests of
-local clients to specified *channel*, thus making you **feel** as if the
-*Server* is running locally (even if its not). Any *Client* can also register
-to *channel* `/`, but this is **unnecessary** since you can directly request
-the *Proxy* server instead.
-
-
 ## usage
 
 `rhost` can be used both as a command-line program, and as a Javascript
@@ -218,5 +185,39 @@ rhost.Client('ThugClient', {
   'ping': 8000
 });
 ```
+
+
+## working
+
+### Proxy
+
+It acts as a server on a single port, and manages communication between
+*Clients* and *Servers* through *channels*. Each *Server* registers to a unique
+*channel* (like `/` or `/ssh`), and any number of *Clients* can then connect to
+the *Proxy* on that *channel*. The *Proxy* also itself acts as a client on
+*channel* `/` forwarding any HTTP requests it receives on its port to the
+*Server* registered to *channel* `/`.
+
+### Server
+
+It connects to the *Proxy*, and registers to a unique *channel* using a *key*
+and a *token*. The *key* must match the one stored on the *Proxy* for that
+*channel*. Once registered, the *token* is used to accept *Clients*. *Server*
+then acts a multiple local clients for forwarding requests to local server from
+specified *channel*, thus making you **feel** as if the *Clients* are running
+locally (even if its not). A *Server* registered to *channel* `/` will also
+receive *HTTP requests* from *Proxy*, becuase *Proxy* also acts as a *Client*
+to *channel* `/`.
+
+### Client
+
+It connects to the *Proxy*, and subscribes to a *channel* using a *token*. This
+*token* must match the one provided by the *Server* registered to this
+*channel*. *Client* then acts as a local server for forwarding requests of
+local clients to specified *channel*, thus making you **feel** as if the
+*Server* is running locally (even if its not). Any *Client* can also register
+to *channel* `/`, but this is **unnecessary** since you can directly request
+the *Proxy* server instead.
+
 
 [Heroku]: http://www.heroku.com
