@@ -1,4 +1,6 @@
+<p align="center">
 # rhost
+</p>
 
 [![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
 
