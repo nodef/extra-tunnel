@@ -476,6 +476,11 @@ if(require.main===module) {
     'key': E.KEY,
     'token': E.TOKEN,
   };
+  for(var k of E) {
+    if(!k.startsWith('KEYS_')) continue;
+    var chn = k.substring(4).toLowerCase().replace('_', '/');
+    o.keys[chn] = E[k];
+  }
   for(var i=2, I=A.length; i<I; i++) {
     if(!A[i].startsWith('-')) mode = A[i].toLowerCase();
     else if(A[i]==='--proxy' || A[i]==='-p') o.proxy = A[++i];
