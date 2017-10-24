@@ -35,6 +35,17 @@ ask questions to their *class teacher*.
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
+## install
+
+```bash
+# to use from command line
+npm install -g rhost
+
+# to use from node.js
+npm install rhost
+```
+
+
 ## usage
 
 `rhost` can be used both as a command-line program, and as a Javascript
