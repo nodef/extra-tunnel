@@ -52,6 +52,9 @@ In order to start, we need a *Proxy* first. Let's set it up:
 
 ### Server/Client
 
+We need to install [rhost] locally in order to use it as *Server*, or as
+*Client* (or even *Proxy*, but a private-ip *Proxy* would only be useful in
+testing).
 ```bash
 # to use from command line
 npm install -g rhost
