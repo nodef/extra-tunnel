@@ -8,6 +8,8 @@ const A = process.argv;
 const USERAGENT_SERVER = 'rhost/server';
 const USERAGENT_CLIENT = 'rhost/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
+const encode = encodeURIComponent;
+const decode = decodeURIComponent;
 const tokenReq = (opt) => (
   'HEAD '+opt.url+' HTTP/1.1\r\n'+
   'Upgrade: tcp\r\n'+
@@ -135,7 +137,7 @@ function Proxy(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['user-agent'].split(' ');
-    if(opt.keys[chn]!==(ath[1]||'')) return `bad key for ${chn}`;
+    if(opt.keys[chn]!==decode(ath[1]||'')) return `bad key for ${chn}`;
     if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
@@ -143,7 +145,7 @@ function Proxy(px, opt) {
     const soc = sockets.get(id);
     soc.removeAllListeners('data');
     soc.write(tokenRes());
-    tokens.set(chn, ath[2]||'');
+    tokens.set(chn, decode(ath[2]||''));
     channels.set(chn, id);
     servers.set(id, chn);
     // d. closed? delete clients
@@ -166,7 +168,7 @@ function Proxy(px, opt) {
   function onClient(id, req) {
     // a. authenticate client
     const chn = req.url, ath = req.headers['user-agent'].split(' ');
-    if(tokens.get(chn)!==(ath[1]||'')) return `bad token for ${chn}`;
+    if(tokens.get(chn)!==decode(ath[1]||'')) return `bad token for ${chn}`;
     // b. accept client
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
     console.log(`${px}:${id} ${chn} client token accepted`);
@@ -307,7 +309,7 @@ function Server(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': USERAGENT_SERVER+' '+opt.key+' '+opt.token
+    'auth': USERAGENT_SERVER+' '+encode(opt.key)+' '+encode(opt.token)
   }));
   // 4. try to keep connection alive
   setTimeout(proxyPing, opt.ping);
@@ -381,7 +383,7 @@ function Client(px, opt) {
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': USERAGENT_CLIENT+' '+opt.token
+    'auth': USERAGENT_CLIENT+' '+encode(opt.token)
   }));
   // 4. try to keep connection alive
   setTimeout(proxyPing, opt.ping);
