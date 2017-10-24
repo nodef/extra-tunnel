@@ -40,14 +40,12 @@ ask questions to their *class teacher*.
 ### Setup Proxy
 
 In order to start, we need a *Proxy* first. Let's set it up:
-
 1. Get *Proxy* to your [GitHub].
-  1. Create an account on [GitHub].
-  2. Goto [rhost] repository, and fork it.
-
+    1. Create an account on [GitHub].
+    2. Goto [rhost] repository, and fork it.
 2. Create *Proxy* application in cloud.
-  1. Create an account on [Heroku].
-  2. On [Heroku dashboard], create a new app, like `proxywebapp`.
+    1. Create an account on [Heroku].
+    2. On [Heroku dashboard], create a new app, like `proxywebapp`.
 
 
 
