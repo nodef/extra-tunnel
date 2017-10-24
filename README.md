@@ -35,9 +35,9 @@ ask questions to their *class teacher*.
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 
 
-## usage
+## Usage
 
-### install
+### Install
 
 ```bash
 # to use from command line
@@ -47,15 +47,7 @@ npm install -g rhost
 npm install rhost
 ```
 
-
-## usage
-
-## command-line
-
-```bash
-# install globally
-$ npm install -g rhost
-```
+## Command Line
 
 ```bash
 $ rhost [<mode>] [options]
