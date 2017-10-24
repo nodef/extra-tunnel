@@ -471,6 +471,7 @@ if(require.main===module) {
     'server': E.SERVER,
     'client': E.CLIENT,
     'channel': E.CHANNEL,
+    'keys': E.KEYS,
     'key': E.KEY,
     'token': E.TOKEN,
   };
@@ -480,6 +481,7 @@ if(require.main===module) {
     else if(A[i]==='--server' || A[i]==='-s') o.server = A[++i];
     else if(A[i]==='--client' || A[i]==='-c') o.client = A[++i];
     else if(A[i]==='--channel' || A[i]==='-n') o.channel = A[++i];
+    else if(A[i]==='--keys' || A[i]==='-e') o.keys = A[++i];
     else if(A[i]==='--key' || A[i]==='-k') o.key = A[++i];
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else throw new Error(`bad option ${A[i]}`);
