@@ -37,6 +37,18 @@ ask questions to their *class teacher*.
 
 ## Usage
 
+### Setup Proxy
+
+In order to start, we need a *Proxy* first. Let's set it up:
+1. Get *Proxy* to your [GitHub].
+   a. Create an account on [GitHub].
+   b. Goto [rhost] repository, and fork it.
+2. Create *Proxy* application in cloud.
+  a. Create an account on [Heroku].
+  b. On [Heroku dashboard], create a new app, like `proxywebapp`.
+
+
+
 ### Install
 
 ```bash
@@ -47,7 +59,13 @@ npm install -g rhost
 npm install rhost
 ```
 
-## Command Line
+### Command Line
+
+#### Host local HTTP server
+
+```bash
+
+```
 
 ```bash
 $ rhost [<mode>] [options]
