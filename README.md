@@ -1,5 +1,5 @@
 <p align="center">
-# rhost
+  <h1>rhost</h1>
 </p>
 
 [![NPM](https://nodei.co/npm/rhost.png)](https://nodei.co/npm/rhost/)
