@@ -466,7 +466,8 @@ module.exports = {Proxy, Server, Client};
 if(require.main===module) {
   const E = process.env;
   const A = process.argv;
-  var mode = 'proxy', o = {
+  const stdin = process.stdin;
+  var mode = 'proxy', intxt = '', o = {
     'proxy': E.PROXY||E.PORT,
     'server': E.SERVER,
     'client': E.CLIENT,
@@ -486,8 +487,17 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else throw new Error(`bad option ${A[i]}`);
   }
-  if(mode==='proxy') return new Proxy(null, o);
-  else if(mode==='server') return new Server(null, o);
-  else if(mode==='client') return new Client(null, o);
-  else throw new Error(`bad mode ${mode}`);
+  stdin.setEncoding('utf8');
+  stdin.on('readable', () => {
+    const chunk = stdin.read();
+    if(chunk!=null) intxt += chunk;
+  });
+  stdin.on('end', () => {
+    if(intxt) o.keys = intxt;
+    o.keys = JSON.parse(o.keys);
+    if(mode==='proxy') return new Proxy(null, o);
+    else if(mode==='server') return new Server(null, o);
+    else if(mode==='client') return new Client(null, o);
+    else throw new Error(`bad mode ${mode}`);
+  });
 };
