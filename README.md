@@ -68,7 +68,7 @@ npm install rhost
 
 ### Host local HTTP server
 
-Assuming you [Heroku] app name is `proxywebapp`, and your local server is
+Assuming your [Heroku] app name is `proxywebapp`, and your local server is
 running on port 80. The following command starts up a *Server*, which acts as a
 bridge between your local server `localhost:80` and the *Proxy* `proxywebapp`.
 Try opening `https://proxywebapp.herokuapp.com`, after this command.
@@ -77,6 +77,16 @@ Try opening `https://proxywebapp.herokuapp.com`, after this command.
 rhost server --proxy proxywebapp.herokuapp.com --server 80
 ```
 
+### Host local SSH server
+
+Assuming your [Heroku] app name is `proxywebapp`, and your local SSH server is
+running on port 22. The following command starts up a *Server*, which acts as a
+bridge between your local server `localhost:22` and the *Proxy* `proxywebapp`,
+on *channel* `/ssh`.
+
+```bash
+rhost server -p proxywebapp.herokuapp.com -s 22 --channel /ssh
+```
 
 ### Command Line
 
