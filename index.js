@@ -464,6 +464,7 @@ function Client(px, opt) {
 // IV. setup exports, commandline
 module.exports = {Proxy, Server, Client};
 if(require.main===module) {
+  // 1. setup defaults
   const E = process.env;
   const A = process.argv;
   const stdin = process.stdin;
@@ -476,11 +477,13 @@ if(require.main===module) {
     'key': E.KEY,
     'token': E.TOKEN,
   };
+  // 2. get keys from env
   for(var k of E) {
     if(!k.startsWith('KEYS_')) continue;
     var chn = k.substring(4).toLowerCase().replace('_', '/');
     o.keys[chn] = E[k];
   }
+  // 3. get options from args
   for(var i=2, I=A.length; i<I; i++) {
     if(!A[i].startsWith('-')) mode = A[i].toLowerCase();
     else if(A[i]==='--proxy' || A[i]==='-p') o.proxy = A[++i];
@@ -492,14 +495,17 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else throw new Error(`bad option ${A[i]}`);
   }
+  // 4. get keys from stdin (JSON)
   stdin.setEncoding('utf8');
   stdin.on('readable', () => {
     const chunk = stdin.read();
     if(chunk!=null) intxt += chunk;
   });
   stdin.on('end', () => {
+    // a. parse keys as JSON
     if(intxt) o.keys = intxt;
     o.keys = JSON.parse(o.keys);
+    // b. run based on mode
     if(mode==='proxy') return new Proxy(null, o);
     else if(mode==='server') return new Server(null, o);
     else if(mode==='client') return new Client(null, o);
