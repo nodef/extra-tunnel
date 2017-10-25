@@ -162,6 +162,7 @@ $ rhost [<mode>] [options]
 # -k | --key: key for registering server
 # -t | --token: token for subscribing client
 # -e | --keys: JSON object with keys of channels
+# -i | --ping: ping period to Proxy
 # environment variables are also accepted
 # PORT: port number for proxy
 # PROXY: address of proxy
@@ -173,6 +174,7 @@ $ rhost [<mode>] [options]
 # KEYS: JSON object with keys of channels
 # KEYS_CH1: key for channel /ch1
 # KEYS_CH1_CH2: key for channel /ch1/ch2
+# PING: ping period to Proxy
 ```
 
 ### javascript
