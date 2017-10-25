@@ -204,13 +204,13 @@ rhost.<Mode>([<prefix>], [<options>]);
 
 ## Conclusion
 
-Listen to: [Epic Mountain]
-Take inspiration from: [Samy Kamkar]
-Node Docs are very helpful: [Net Node.js]
-Make 3d illustrations in: [Scrap Mechanic]
-Make ASCII art using: [Tagg]
-Get help writing Markdown: [Markdown Cheatsheet]
-Get Professional icons from: [Icon Experience]
+Listen to: [Epic Mountain]<br>
+Take inspiration from: [Samy Kamkar]<br>
+Node Docs are very helpful: [Net Node.js]<br>
+Make 3d illustrations in: [Scrap Mechanic]<br>
+Make ASCII art using: [Tagg]<br>
+Get help writing Markdown: [Markdown Cheatsheet]<br>
+Get Professional icons from: [Icon Experience]<br>
 
 (Actually, its a bookmark list, not conclusion)
 
