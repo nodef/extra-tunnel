@@ -200,6 +200,7 @@ rhost.<Mode>([<prefix>], [<options>]);
 // keys: keys for each allowed channel ({'/': ''})
 // ping: ping-pong period (8000)
 ```
+<br><br>
 
 
 ## Conclusion
