@@ -202,7 +202,26 @@ rhost.<Mode>([<prefix>], [<options>]);
 ```
 
 
+## Conclusion
+
+Listen to: [Epic Mountain]
+Take inspiration from: [Samy Kamkar]
+Node Docs are very helpful: [Net Node.js]
+Make 3d illustrations in: [Scrap Mechanic]
+Make ASCII art using: [Tagg]
+Get help writing Markdown: [Markdown Cheatsheet]
+Get Professional icons from: [Icon Experience]
+
+(Actually, its a bookmark list, not conclusion)
+
 [GitHub]: https://github.com
 [Heroku]: https://www.heroku.com
 [rhost]: https://github.com/nodef/rhost
 [Heroku dashboard]: https://dashboard.heroku.com/apps
+[Epic Mountain]:https://soundcloud.com/epicmountain
+[Samy Kamkar]: https://samy.pl
+[Net Node.js]: https://nodejs.org/api/net.html
+[Scrap Mechanic]: http://scrapmechanic.com
+[Taag]: http://patorjk.com/software/taag
+[Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+[Icon Experience]: https://www.iconexperience.com
