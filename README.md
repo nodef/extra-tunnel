@@ -208,7 +208,7 @@ Listen to: [Epic Mountain]<br>
 Take inspiration from: [Samy Kamkar]<br>
 Node Docs are very helpful: [Net Node.js]<br>
 Make 3d illustrations in: [Scrap Mechanic]<br>
-Make ASCII art using: [Tagg]<br>
+Make ASCII art using: [Taag]<br>
 Get help writing Markdown: [Markdown Cheatsheet]<br>
 Get Professional icons from: [Icon Experience]<br>
 
