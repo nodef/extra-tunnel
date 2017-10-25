@@ -33,6 +33,7 @@ requests to the *Server*, and so can any number of *students* in a *classroom*
 ask questions to their *class teacher*.
 
 ![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
+<br><br>
 
 
 ## Setup
@@ -62,6 +63,7 @@ npm install -g rhost
 # to use from node.js
 npm install rhost
 ```
+<br><br>
 
 
 ## Usage
@@ -112,6 +114,7 @@ command:
 ```bash
 rhost client -p proxywebapp.herokuapp.com -c 22 -n /ssh
 ```
+<br><br>
 
 
 ## Concept
@@ -145,6 +148,7 @@ local clients to specified *channel*, thus making you **feel** as if the
 *Server* is running locally (even if its not). Any *Client* can also register
 to *channel* `/`, but this is **unnecessary** since you can directly request
 the *Proxy* server instead.
+<br><br>
 
 
 ## Reference
@@ -153,6 +157,7 @@ the *Proxy* server instead.
 
 ```bash
 $ rhost [<mode>] [options]
+
 # stdin: can be JSON object with keys of channels
 # mode: this is 'proxy', 'server', or 'client'
 # -p | --proxy: address of proxy
