@@ -153,6 +153,7 @@ the *Proxy* server instead.
 
 ```bash
 $ rhost [<mode>] [options]
+# stdin: can be JSON object with keys of channels
 # mode: this is 'proxy', 'server', or 'client'
 # -p | --proxy: address of proxy
 # -s | --server: address of server
@@ -160,6 +161,7 @@ $ rhost [<mode>] [options]
 # -n | --channel: channel to register/subscribe
 # -k | --key: key for registering server
 # -t | --token: token for subscribing client
+# -e | --keys: JSON object with keys of channels
 # environment variables are also accepted
 # PORT: port number for proxy
 # PROXY: address of proxy
@@ -168,7 +170,7 @@ $ rhost [<mode>] [options]
 # CHANNEL: channel to register/subscribe
 # KEY: key for registering server
 # TOKEN: token for subscribing client
-# KEYS: JSON object of all keys to values
+# KEYS: JSON object with keys of channels
 # KEYS_CH1: key for channel /ch1
 # KEYS_CH1_CH2: key for channel /ch1/ch2
 ```
