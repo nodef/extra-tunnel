@@ -175,39 +175,6 @@ $ rhost [<mode>] [options]
 # KEYS_CH1_CH2: key for channel /ch1/ch2
 ```
 
-```bash
-# start proxy on port 3212
-$ rhost proxy --proxy localhost:3212
-
-# start proxy on port 80
-$ rhost proxy -p localhost
-
-# start Proxy on port 80
-$ rhost proxy -p 80
-
-# start Proxy on env PORT
-$ rhost proxy
-```
-
-```bash
-# start server to Proxy on rhost.herokuapp.com to local server on channel '/'
-$ rhost server -p rhost.herokuapp.com --server localhost:8080 -- channel /
-
-# start server to Proxy with client token '1234' on channel '/'
-$ rhost server -p rhost.herokuapp.com -s 8080 -t 1234
-
-# start server to Proxy with channel key 'abcd' on channel '/ssh'
-$ rhost server -p rhost.herokuapp.com -s 22 -n /ssh -k abcd -t 1234
-```
-
-```bash
-# start client to Proxy on rhost.herokuapp.com with local server to channel '/'
-$ rhost client -p rhost.herokuapp.com --client localhost:9090 --channel '/'
-
-# start client to Proxy with client token '1234' to channel '/ssh'
-$ rhost client -p rhost.herokuapp.com -c 22 -n '/ssh' -t 1234
-```
-
 ### javascript
 
 ```javascript
