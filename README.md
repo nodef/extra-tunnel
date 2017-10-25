@@ -177,7 +177,7 @@ $ rhost [<mode>] [options]
 # PING: ping period to Proxy
 ```
 
-### javascript
+### Node.js
 
 ```javascript
 const rhost = require('rhost');
@@ -189,10 +189,10 @@ rhost.<Mode>([<prefix>], [<options>]);
 // proxy: address of proxy ('localhost')
 // server: address of server ('localhost:81')
 // client: address of client ('localhost:82')
-// keys: keys for each allowed channel ({'/': ''})
 // channel: channel to register/subscribe ('/')
 // key: key for registering server ('')
 // token: token for subscribing client ('')
+// keys: keys for each allowed channel ({'/': ''})
 // ping: ping-pong period (8000)
 ```
 
