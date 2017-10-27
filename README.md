@@ -166,8 +166,8 @@ $ rhost [<mode>] [options]
 # -n | --channel: channel to register/subscribe
 # -k | --key: key for registering server
 # -t | --token: token for subscribing client
-# -e | --keys: JSON object with keys of channels
 # -i | --ping: ping period to Proxy
+# -e | --keys: JSON object with keys of channels
 # environment variables are also accepted
 # PORT: port number for proxy
 # PROXY: address of proxy
@@ -176,10 +176,10 @@ $ rhost [<mode>] [options]
 # CHANNEL: channel to register/subscribe
 # KEY: key for registering server
 # TOKEN: token for subscribing client
+# PING: ping period to Proxy
 # KEYS: JSON object with keys of channels
 # KEYS_CH1: key for channel /ch1
 # KEYS_CH1_CH2: key for channel /ch1/ch2
-# PING: ping period to Proxy
 ```
 
 ### Node.js
@@ -197,8 +197,8 @@ rhost.<Mode>([<prefix>], [<options>]);
 // channel: channel to register/subscribe ('/')
 // key: key for registering server ('')
 // token: token for subscribing client ('')
-// keys: keys for each allowed channel ({'/': ''})
 // ping: ping-pong period (8000)
+// keys: keys for each allowed channel ({'/': ''})
 ```
 <br><br>
 
