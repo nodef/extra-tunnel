@@ -494,6 +494,10 @@ if(require.main===module) {
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
     else if(A[i]==='--keys' || A[i]==='-e') o.keys = A[++i];
     else if(A[i]==='--ping' || A[i]==='-i') o.ping = A[++i];
+    else if(A[i].startsWith('--keys_')) {
+      var chn = A[i].substring(6).toLowerCase().replace('_', '/');
+      o.keys[chn] = A[++i];
+    }
     else throw new Error(`bad option ${A[i]}`);
   }
   // 4. convert to proper type
