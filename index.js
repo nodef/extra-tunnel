@@ -474,8 +474,8 @@ if(require.main===module) {
     'channel': E.CHANNEL,
     'key': E.KEY,
     'token': E.TOKEN,
-    'keys': JSON.parse(E.KEYS),
-    'ping': parseInt(E.PING, 10)
+    'ping': parseInt(E.PING, 10),
+    'keys': JSON.parse(E.KEYS)
   };
   // 2. get keys from env
   for(var k in E) {
@@ -492,8 +492,8 @@ if(require.main===module) {
     else if(A[i]==='--channel' || A[i]==='-n') o.channel = A[++i];
     else if(A[i]==='--key' || A[i]==='-k') o.key = A[++i];
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
-    else if(A[i]==='--keys' || A[i]==='-e') o.keys = JSON.parse(A[++i]);
     else if(A[i]==='--ping' || A[i]==='-i') o.ping = parseInt(A[++i], 10);
+    else if(A[i]==='--keys' || A[i]==='-e') o.keys = JSON.parse(A[++i]);
     else if(A[i].startsWith('--keys_')) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
       o.keys[chn] = A[++i];
