@@ -177,7 +177,7 @@ $ rhost [<mode>] [options]
 # CHANNEL: channel to register/subscribe
 # KEY: key for registering server
 # TOKEN: token for subscribing client
-# PING: ping period to Proxy
+# PING: ping period to Proxy in ms
 # KEYS: JSON object with keys of channels
 # KEYS_CH1: key for channel /ch1
 # KEYS_CH1_CH2: key for channel /ch1/ch2
@@ -198,7 +198,7 @@ rhost.<Mode>([<prefix>], [<options>]);
 // channel: channel to register/subscribe ('/')
 // key: key for registering server ('')
 // token: token for subscribing client ('')
-// ping: ping-pong period (8000)
+// ping: ping period to Proxy in ms (8000)
 // keys: keys for each allowed channel ({'/': ''})
 ```
 <br><br>
