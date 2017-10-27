@@ -467,8 +467,7 @@ if(require.main===module) {
   // 1. setup defaults
   const E = process.env;
   const A = process.argv;
-  const stdin = process.stdin;
-  var mode = 'proxy', intxt = '', o = {
+  var mode = 'proxy', o = {
     'proxy': E.PROXY||E.PORT,
     'server': E.SERVER,
     'client': E.CLIENT,
@@ -497,21 +496,12 @@ if(require.main===module) {
     else if(A[i]==='--ping' || A[i]==='-i') o.ping = A[++i];
     else throw new Error(`bad option ${A[i]}`);
   }
-  // 4. get keys from stdin (JSON)
-  stdin.setEncoding('utf8');
-  stdin.on('readable', () => {
-    const chunk = stdin.read();
-    if(chunk!=null) intxt += chunk;
-  });
-  stdin.on('end', () => {
-    // a. parse keys as JSON
-    if(intxt) o.keys = intxt;
-    o.keys = JSON.parse(o.keys);
-    o.ping = parseInt(o.keys, 10);
-    // b. run based on mode
-    if(mode==='proxy') return new Proxy(null, o);
-    else if(mode==='server') return new Server(null, o);
-    else if(mode==='client') return new Client(null, o);
-    else throw new Error(`bad mode ${mode}`);
-  });
+  // 4. convert to proper type
+  o.keys = JSON.parse(o.keys);
+  o.ping = parseInt(o.keys, 10);
+  // 5. run based on mode
+  if(mode==='proxy') return new Proxy(null, o);
+  else if(mode==='server') return new Server(null, o);
+  else if(mode==='client') return new Client(null, o);
+  else throw new Error(`bad mode ${mode}`);
 };
