@@ -475,7 +475,7 @@ if(require.main===module) {
     'key': E.KEY,
     'token': E.TOKEN,
     'ping': parseInt(E.PING, 10),
-    'keys': JSON.parse(E.KEYS)
+    'keys': JSON.parse(E.KEYS||'{}')
   };
   // 2. get keys from env
   for(var k in E) {
