@@ -479,7 +479,7 @@ if(require.main===module) {
     'ping': E.PING
   };
   // 2. get keys from env
-  for(var k of E) {
+  for(var k in E) {
     if(!k.startsWith('KEYS_')) continue;
     var chn = k.substring(4).toLowerCase().replace('_', '/');
     o.keys[chn] = E[k];
