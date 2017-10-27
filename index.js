@@ -474,7 +474,7 @@ if(require.main===module) {
     'channel': E.CHANNEL,
     'key': E.KEY,
     'token': E.TOKEN,
-    'keys': E.KEYS,
+    'keys': JSON.parse(E.KEYS),
     'ping': parseInt(E.PING, 10)
   };
   // 2. get keys from env
@@ -492,7 +492,7 @@ if(require.main===module) {
     else if(A[i]==='--channel' || A[i]==='-n') o.channel = A[++i];
     else if(A[i]==='--key' || A[i]==='-k') o.key = A[++i];
     else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
-    else if(A[i]==='--keys' || A[i]==='-e') o.keys = A[++i];
+    else if(A[i]==='--keys' || A[i]==='-e') o.keys = JSON.parse(A[++i]);
     else if(A[i]==='--ping' || A[i]==='-i') o.ping = parseInt(A[++i], 10);
     else if(A[i].startsWith('--keys_')) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
@@ -500,8 +500,6 @@ if(require.main===module) {
     }
     else throw new Error(`bad option ${A[i]}`);
   }
-  // 4. convert to proper type
-  o.keys = JSON.parse(o.keys);
   // 5. run based on mode
   if(mode==='proxy') return new Proxy(null, o);
   else if(mode==='server') return new Server(null, o);
