@@ -158,7 +158,6 @@ the *Proxy* server instead.
 ```bash
 $ rhost [<mode>] [options]
 
-# stdin: can be JSON object with keys of channels
 # mode: this is 'proxy', 'server', or 'client'
 # -p | --proxy: address of proxy
 # -s | --server: address of server
