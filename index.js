@@ -2,6 +2,7 @@
 const url = require('url');
 const net = require('net');
 const cp = require('child_process');
+const fs = require('fs');
 
 // I. global variables
 const USERAGENT_SERVER = 'rhost/server';
@@ -499,7 +500,11 @@ if(require.main===module) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
       o.keys[chn] = A[++i];
     }
-    else if(A[i]==='--help') return cp.execSync('less README.md');
+    else if(A[i]==='--help') return cp.execSync(`less ${__dirname}/README.md`);
+    else if(A[i]==='--version') {
+      var pkg = fs.readFileSync(`${__dirname}/package.json`);
+      return console.log(JSON.parse(pkg).version);
+    }
     else throw new Error(`bad option ${A[i]}`);
   }
   // 5. run based on mode
