@@ -1,6 +1,7 @@
 'use strict';
 const url = require('url');
 const net = require('net');
+const cp = require('child_process');
 
 // I. global variables
 const USERAGENT_SERVER = 'rhost/server';
@@ -498,6 +499,7 @@ if(require.main===module) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
       o.keys[chn] = A[++i];
     }
+    else if(A[i]==='--help') return cp.execSync('less README.md');
     else throw new Error(`bad option ${A[i]}`);
   }
   // 5. run based on mode
