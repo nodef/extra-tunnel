@@ -169,6 +169,8 @@ $ rhost [<mode>] [options]
 # -e | --keys: JSON object with keys of channels
 # --keys_ch1: key for channel /ch1
 # --keys_ch1_ch2: key for channel /ch1/ch2
+# --version: get version
+# --help: get this help
 # environment variables are also accepted
 # PORT: port number for proxy
 # PROXY: address of proxy

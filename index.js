@@ -500,14 +500,14 @@ if(require.main===module) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
       o.keys[chn] = A[++i];
     }
+    else if(A[i]==='--version') {
+      var pkg = fs.readFileSync(`${__dirname}/package.json`);
+      return console.log(JSON.parse(pkg).version);
+    }
     else if(A[i]==='--help') {
       return cp.execSync(`less ${__dirname}/README.md`, {
         'stdio': [0, 1, 2]
       });
-    }
-    else if(A[i]==='--version') {
-      var pkg = fs.readFileSync(`${__dirname}/package.json`);
-      return console.log(JSON.parse(pkg).version);
     }
     else throw new Error(`bad option ${A[i]}`);
   }
