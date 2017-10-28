@@ -500,7 +500,7 @@ if(require.main===module) {
       var chn = A[i].substring(6).toLowerCase().replace('_', '/');
       o.keys[chn] = A[++i];
     }
-    else if(A[i]==='--help') return cp.execSync(`less ${__dirname}/README.md`);
+    else if(A[i]==='--help') return cp.execSync(`more ${__dirname}/README.md`);
     else if(A[i]==='--version') {
       var pkg = fs.readFileSync(`${__dirname}/package.json`);
       return console.log(JSON.parse(pkg).version);
