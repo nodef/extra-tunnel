@@ -38,6 +38,8 @@ ask questions to their *class teacher*.
 
 ## Setup
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/nodef/rhost.svg)](https://greenkeeper.io/)
+
 ### Proxy
 
 In order to start, we need a *Proxy* first. Let's set it up:
