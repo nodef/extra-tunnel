@@ -257,21 +257,21 @@ function Tunnel(px, opt) {
 
 
 // III. server constructor
-function Server(px, opt) {
+function Server(px, o) {
   // 1. setup defaults
   px = px||'server';
-  opt = opt||{};
-  opt.proxy = opt.proxy||'localhost';
-  opt.server = opt.server||'localhost:81';
-  opt.channel = opt.channel||'/';
-  opt.key = opt.key||'';
-  opt.token = opt.token||'';
-  opt.ping = opt.ping||8000;
+  o = o||{};
+  o.proxy = o.proxy||'localhost';
+  o.server = o.server||'localhost:81';
+  o.channel = o.channel||'/';
+  o.key = o.key||'';
+  o.token = o.token||'';
+  o.ping = o.ping||8000;
   // 2. setup server
-  const purl = urlParse(opt.proxy);
-  const surl = urlParse(opt.server);
+  const purl = urlParse(o.proxy);
+  const surl = urlParse(o.server);
   const proxy = net.createConnection(purl.port, purl.hostname);
-  const channel = opt.channel;
+  const channel = o.channel;
   const sockets = new Map();
   var bufs = [], bsz = 0;
   var ath = false;
@@ -285,7 +285,7 @@ function Server(px, opt) {
     });
     // b. connected? report
     soc.on('connect', (err) => {
-      console.log(`${px}:${set}.${tag} connected to ${opt.server}`);
+      console.log(`${px}:${set}.${tag} connected to ${o.server}`);
     });
     // c. closed? report
     soc.on('close', () => {
@@ -302,17 +302,17 @@ function Server(px, opt) {
     // a. send a ping packet
     if(proxy.destroyed) return;
     proxy.write(packetWrite('pi', 0, 0));
-    setTimeout(proxyPing, opt.ping);
+    setTimeout(proxyPing, o.ping);
   };
 
   // 3. register as server
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': USERAGENT_SERVER+' '+encode(opt.key)+' '+encode(opt.token)
+    'auth': USERAGENT_SERVER+' '+encode(o.key)+' '+encode(o.token)
   }));
   // 4. try to keep connection alive
-  setTimeout(proxyPing, opt.ping);
+  setTimeout(proxyPing, o.ping);
   // 5. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
@@ -326,7 +326,7 @@ function Server(px, opt) {
   });
   // 7. connected? report
   proxy.on('connect', () => {
-    console.log(`${px} connected to ${opt.proxy}`);
+    console.log(`${px} connected to ${o.proxy}`);
   });
   // 8. data? handle it
   proxy.on('data', (buf) => {
