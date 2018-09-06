@@ -464,7 +464,9 @@ function Client(px, o) {
 
 
 // IV. setup exports, commandline
-module.exports = {Tunnel, Server, Client};
+Tunnel.Server = Server;
+Tunnel.Client = Client;
+module.exports = Tunnel;
 if(require.main===module) {
   // 1. setup defaults
   const E = process.env;
