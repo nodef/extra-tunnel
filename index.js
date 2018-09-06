@@ -100,15 +100,15 @@ function packetWrite(on, set, tag, body) {
 
 
 // II. proxy constructor
-function Tunnel(px, opt) {
+function Tunnel(px, o) {
   // 1. setup defaults
   px = px||'proxy';
-  opt = opt||{};
-  opt.proxy = opt.proxy||'localhost';
-  opt.keys = opt.keys||{};
-  opt.keys['/'] = opt.keys['/']||'';
+  o = o||{};
+  o.proxy = o.proxy||'localhost';
+  o.keys = o.keys||{};
+  o.keys['/'] = o.keys['/']||'';
   // 2. setup proxy
-  const purl = urlParse(opt.proxy);
+  const purl = urlParse(o.proxy);
   const proxy = net.createServer();
   const channels = new Map();
   const servers = new Map();
@@ -137,7 +137,7 @@ function Tunnel(px, opt) {
   function onServer(id, req) {
     // a. authenticate server
     const chn = req.url, ath = req.headers['user-agent'].split(' ');
-    if(opt.keys[chn]!==decode(ath[1]||'')) return `bad key for ${chn}`;
+    if(o.keys[chn]!==decode(ath[1]||'')) return `bad key for ${chn}`;
     if(channels.has(chn)) return `${chn} not available`;
     // b. accept server
     var bufs = [req.buffer.slice(req.length)], bsz = bufs[0].length;
