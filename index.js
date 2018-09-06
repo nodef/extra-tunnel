@@ -100,7 +100,7 @@ function packetWrite(on, set, tag, body) {
 
 
 // II. proxy constructor
-function Proxy(px, opt) {
+function Tunnel(px, opt) {
   // 1. setup defaults
   px = px||'proxy';
   opt = opt||{};
@@ -464,13 +464,13 @@ function Client(px, opt) {
 
 
 // IV. setup exports, commandline
-module.exports = {Proxy, Server, Client};
+module.exports = {Tunnel, Server, Client};
 if(require.main===module) {
   // 1. setup defaults
   const E = process.env;
   const A = process.argv;
-  var mode = 'proxy', o = {
-    'proxy': E.PROXY||E.PORT,
+  var mode = 'tunnel', o = {
+    'tunnel': E.TUNNEL||E.PORT,
     'server': E.SERVER,
     'client': E.CLIENT,
     'channel': E.CHANNEL,
@@ -488,7 +488,7 @@ if(require.main===module) {
   // 3. get options from args
   for(var i=2, I=A.length; i<I; i++) {
     if(!A[i].startsWith('-')) mode = A[i].toLowerCase();
-    else if(A[i]==='--proxy' || A[i]==='-p') o.proxy = A[++i];
+    else if(A[i]==='--tunnel' || A[i]==='-p') o.tunnel = A[++i];
     else if(A[i]==='--server' || A[i]==='-s') o.server = A[++i];
     else if(A[i]==='--client' || A[i]==='-c') o.client = A[++i];
     else if(A[i]==='--channel' || A[i]==='-n') o.channel = A[++i];
@@ -512,7 +512,7 @@ if(require.main===module) {
     else throw new Error(`bad option ${A[i]}`);
   }
   // 5. run based on mode
-  if(mode==='proxy') return new Proxy(null, o);
+  if(mode==='tunnel') return new Tunnel(null, o);
   else if(mode==='server') return new Server(null, o);
   else if(mode==='client') return new Client(null, o);
   else throw new Error(`bad mode ${mode}`);
