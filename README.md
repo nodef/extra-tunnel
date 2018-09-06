@@ -192,22 +192,12 @@ rhost.<Mode>([<prefix>], [<options>]);
 <br><br>
 
 
-## Conclusion
+## Bookmarks
 
-Listen to: [Epic Mountain]<br>
-Take inspiration from: [Samy Kamkar]<br>
-Node Docs are very helpful: [Net Node.js]<br>
-Make 3d illustrations in: [Scrap Mechanic]<br>
-Make ASCII art using: [Taag]<br>
-Get help writing Markdown: [Markdown Cheatsheet]<br>
-Get Professional icons from: [Icon Experience]<br>
+Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];
+Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];
+Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]
 
-(Actually, its a bookmark list, not conclusion)
-
-[GitHub]: https://github.com
-[Heroku]: https://www.heroku.com
-[rhost]: https://github.com/nodef/rhost
-[Heroku dashboard]: https://dashboard.heroku.com/apps
 [Epic Mountain]:https://soundcloud.com/epicmountain
 [Samy Kamkar]: https://samy.pl
 [Net Node.js]: https://nodejs.org/api/net.html
@@ -215,3 +205,9 @@ Get Professional icons from: [Icon Experience]<br>
 [Taag]: http://patorjk.com/software/taag
 [Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 [Icon Experience]: https://www.iconexperience.com
+
+
+[GitHub]: https://github.com
+[Heroku]: https://www.heroku.com
+[rhost]: https://github.com/nodef/rhost
+[Heroku dashboard]: https://dashboard.heroku.com/apps
