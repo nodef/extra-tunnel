@@ -27,25 +27,25 @@ ask questions to their *class teacher*.
 In order to start, we need a *Tunnel* first. Let's set it up:
 1. Get *Tunnel* to your [GitHub].
     1. Create an account on [GitHub].
-    2. Goto [rhost] repository, and fork it.
+    2. Goto [extra-tunnel] repository, and fork it.
 2. Create *Tunnel* application in cloud.
     1. Create an account on [Heroku].
     2. On [Heroku dashboard], create a new app, like `tunnelwebapp`.
     3. Select the *Deploy* tab, and the choose *GitHub* as deployment method.
-    4. In *Connect to GitHub*, type in *rhost* and *Connect*.
+    4. In *Connect to GitHub*, type in *extra-tunnel* and *Connect*.
     5. In *Manual Deploy*, *Deploy Branch* when *master* is selected.
 
 ### Server/Client
 
-We need to install [rhost] locally in order to use it as *Server* or *Client*
+We need to install [extra-tunnel] locally in order to use it as *Server* or *Client*
 (a private-ip *Tunnel* would only be useful in testing).
 
 ```bash
 # to use from command line
-npm install -g rhost
+npm install -g extra-tunnel
 
 # to use from node.js
-npm install rhost
+npm install extra-tunnel
 ```
 <br><br>
 
@@ -61,7 +61,7 @@ Try opening `https://tunnelwebapp.herokuapp.com` in your browser, after running
 this command.
 
 ```bash
-rhost server --tunnel tunnelwebapp.herokuapp.com --server 80
+etunnel server --tunnel tunnelwebapp.herokuapp.com --server 80
 ```
 
 ### Host local SSH server
@@ -81,7 +81,7 @@ up a *Server*, which acts as a bridge between your local server `localhost:22`
 and the *Tunnel* `tunnelwebapp`, on *channel* `/ssh`.
 
 ```bash
-rhost server -p tunnelwebapp.herokuapp.com -s 22 --channel /ssh --key admin
+etunnel server -p tunnelwebapp.herokuapp.com -s 22 --channel /ssh --key admin
 ```
 
 The common use of SSH is to access the terminal of a remote computer. In our
@@ -91,12 +91,12 @@ HTTP however, *Tunnel* is unable to act as an SSH server and hence you cannot
 connect directly to it with your SSH client.
 
 To solve this problem, we have a *Client*. Any number of *Clients* can connect
-to a *channel* on the *Tunnel*. So, on a separate machine, install [rhost] using
-the command `npm install -g rhost`, and then start *Client* using the following
+to a *channel* on the *Tunnel*. So, on a separate machine, install [extra-tunnel] using
+the command `npm install -g extra-tunnel`, and then start *Client* using the following
 command:
 
 ```bash
-rhost client -p tunnelwebapp.herokuapp.com -c 22 -n /ssh
+etunnel client -p tunnelwebapp.herokuapp.com -c 22 -n /ssh
 ```
 <br><br>
 
@@ -136,7 +136,7 @@ the *Tunnel* server instead.
 
 [GitHub]: https://github.com
 [Heroku]: https://www.heroku.com
-[rhost]: https://github.com/nodef/rhost
+[extra-tunnel]: https://github.com/nodef/extra-tunnel
 [Heroku dashboard]: https://dashboard.heroku.com/apps
 
 
