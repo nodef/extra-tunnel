@@ -195,11 +195,12 @@ rhost.<Mode>([<prefix>], [<options>]);
 <br><br>
 
 
-## Bookmarks
+![Cartoon](http://oi63.tinypic.com/2uqm5bl.jpg)
+[![Merferry](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
 
-Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];<br>
-Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];<br>
-Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
+> Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];<br>
+> Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];<br>
+> Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
 
 [Epic Mountain]:https://soundcloud.com/epicmountain
 [Samy Kamkar]: https://samy.pl
@@ -208,6 +209,3 @@ Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
 [Taag]: http://patorjk.com/software/taag
 [Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 [Icon Experience]: https://www.iconexperience.com
-
-![Cartoon](http://oi63.tinypic.com/2uqm5bl.jpg)
-[![Merferry](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
