@@ -1,28 +1,35 @@
 {
-  "name": "rhost",
-  "version": "1.0.4",
-  "description": "Host Web Server from a non-public IP.",
+  "name": "extra-tunnel",
+  "version": "0.0.6",
+  "description": "Tunnel web server from private IP.",
   "main": "index.js",
   "scripts": {
     "install": "node install",
     "start": "node ./",
     "test": "exit"
   },
+  "preferGlobal": true,
   "bin": {
-    "rhost": "index.cmd"
+    "etunnel": "index.cmd"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nodef/rhost.git"
+    "url": "git+https://github.com/nodef/extra-tunnel.git"
   },
   "keywords": [
+    "extra",
+    "tunnel",
     "remote",
-    "host"
+    "host",
+    "web",
+    "server",
+    "private",
+    "ip"
   ],
   "author": "wolfram77@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nodef/rhost/issues"
+    "url": "https://github.com/nodef/extra-tunnel/issues"
   },
-  "homepage": "https://github.com/nodef/rhost#readme"
+  "homepage": "https://github.com/nodef/extra-tunnel#readme"
 }

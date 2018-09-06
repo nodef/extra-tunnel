@@ -1,8 +1,7 @@
-'use strict';
 const url = require('url');
 const net = require('net');
-const cp = require('child_process');
 const fs = require('fs');
+
 
 // I. global variables
 const USERAGENT_SERVER = 'tunnel/server';
@@ -25,6 +24,7 @@ const tokenRes = () => (
   'Connection: Upgrade\r\n'+
   '\r\n'
 );
+
 
 function buffersConcat(bufs) {
   // 1. concat buffers into one
