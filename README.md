@@ -145,7 +145,7 @@ the *Tunnel* server instead.
 ### Command Line
 
 ```bash
-$ rhost [<mode>] [options]
+$ etunnel [<mode>] [options]
 
 # mode: this is 'tunnel', 'server', or 'client'
 # -p | --tunnel: address of tunnel
@@ -162,7 +162,7 @@ $ rhost [<mode>] [options]
 # --help: get this help
 # environment variables are also accepted
 # PORT: port number for tunnel
-# PROXY: address of tunnel
+# TUNNEL: address of tunnel
 # SERVER: address of server
 # CLIENT: address of client
 # CHANNEL: channel to register/subscribe
@@ -177,11 +177,11 @@ $ rhost [<mode>] [options]
 ### Node.js
 
 ```javascript
-const rhost = require('rhost');
+const Tunnel = require('extra-tunnel');
 
-rhost.<Mode>([<prefix>], [<options>]);
-// Mode: this is Tunnel, Server, or Client
-// prefix: name of Tunnel in logs
+Tunnel([<prefix>], [<options>]);
+Tunnel.<Server/Client>([<prefix>], [<options>]);
+// prefix: name of object in logs
 // the following options are accepted (object)
 // tunnel: address of tunnel ('localhost')
 // server: address of server ('localhost:81')
