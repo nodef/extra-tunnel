@@ -14,7 +14,7 @@
   </a>
 </p>
 
-> *NOTE*: [rhost] is now updated to *[extra-tunnel]*.
+> **NOTE**: [rhost] is now updated to **[extra-tunnel]**.
 
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
