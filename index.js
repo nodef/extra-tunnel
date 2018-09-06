@@ -99,23 +99,23 @@ function packetWrite(on, set, tag, body) {
 };
 
 
-// II. proxy constructor
+// II. tunnel constructor
 function Tunnel(px, o) {
   // 1. setup defaults
-  px = px||'proxy';
+  px = px||'tunnel';
   o = o||{};
-  o.proxy = o.proxy||'localhost';
+  o.tunnel = o.tunnel||'localhost';
   o.keys = o.keys||{};
   o.keys['/'] = o.keys['/']||'';
-  // 2. setup proxy
-  const purl = urlParse(o.proxy);
-  const proxy = net.createServer();
+  // 2. setup tunnel
+  const turl = urlParse(o.tunnel);
+  const tunnel = net.createServer();
   const channels = new Map();
   const servers = new Map();
   const clients = new Map();
   const sockets = new Map();
   const tokens = new Map();
-  proxy.listen(purl.port);
+  tunnel.listen(turl.port);
   clients.set(0, '/');
   var idn = 1;
 
@@ -207,23 +207,23 @@ function Tunnel(px, o) {
   };
 
   // 3. error? report and close
-  proxy.on('error', (err) => {
+  tunnel.on('error', (err) => {
     console.error(`${px}`, err);
-    proxy.close();
+    tunnel.close();
   });
   // 4. closed? report and close sockets
-  proxy.on('close', () => {
+  tunnel.on('close', () => {
     console.log(`${px} closed`);
     for(var [i, soc] of sockets)
       soc.destroy();
   });
   // 5. listening? report
-  proxy.on('listening', () => {
-    const {port, family, address} = proxy.address();
+  tunnel.on('listening', () => {
+    const {port, family, address} = tunnel.address();
     console.log(`${px} listening on ${address}:${port} (${family})`);
   });
   // 6. connection? handle it
-  proxy.on('connection', (soc) => {
+  tunnel.on('connection', (soc) => {
     // a. report connection
     const id = idn++;
     sockets.set(id, soc);
