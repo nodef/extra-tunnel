@@ -356,15 +356,15 @@ function Client(px, o) {
   // 1. setup defaults
   px = px||'client';
   o = o||{};
-  o.proxy = o.proxy||'localhost';
+  o.tunnel = o.tunnel||'localhost';
   o.client = o.client||'localhost:82';
   o.channel = o.channel||'/';
   o.token = o.token||'';
   o.ping = o.ping||8000;
   // 2. setup client
-  const purl = urlParse(o.proxy);
+  const turl = urlParse(o.tunnel);
   const curl = urlParse(o.client);
-  const proxy = net.createConnection(purl.port, purl.hostname);
+  const tcon = net.createConnection(turl.port, turl.hostname);
   const client = net.createServer();
   const channel = o.channel;
   const sockets = new Map();
@@ -372,50 +372,50 @@ function Client(px, o) {
   var bufs = [], bsz = 0;
   var idn = 1, ath = false;
 
-  function proxyPing() {
+  function tconPing() {
     // a. send a ping packet
-    if(proxy.destroyed) return;
-    proxy.write(packetWrite('pi', 0, 0));
-    setTimeout(proxyPing, o.ping);
+    if(tcon.destroyed) return;
+    tcon.write(packetWrite('pi', 0, 0));
+    setTimeout(tconPing, o.ping);
   };
 
   // 3. register as client
-  proxy.write(tokenReq({
+  tcon.write(tokenReq({
     'url': channel,
-    'host': purl.hostname,
+    'host': turl.hostname,
     'auth': USERAGENT_CLIENT+' '+encode(o.token)
   }));
   // 4. try to keep connection alive
-  setTimeout(proxyPing, o.ping);
+  setTimeout(tconPing, o.ping);
   // 5. error? report
-  proxy.on('error', (err) => {
+  tcon.on('error', (err) => {
     console.error(`${px}`, err);
-    proxy.destroy();
+    tcon.destroy();
   });
   // 6. closed? report
-  proxy.on('close', () => {
-    proxy.destroy();
+  tcon.on('close', () => {
+    tcon.destroy();
     for(var [i, soc] of sockets)
       sockets.delete(i) && soc.destroy();
     if(client.listening) client.close();
   });
   // 7. connected? report
-  proxy.on('connect', () => {
-    console.log(`${px} connected to ${o.proxy}`);
+  tcon.on('connect', () => {
+    console.log(`${px} connected to ${o.tunnel}`);
   });
   // 8. data? handle it
-  proxy.on('data', (buf) => {
-    // a. handle packets from proxy
+  tcon.on('data', (buf) => {
+    // a. handle packets from tunnel
     if(ath) return bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
       const soc = sockets.get(tag);
       if(!soc) return;
       if(on==='d+') return soc.write(body);
       if(sockets.delete(tag)) soc.destroy();
     });
-    // b. handle proxy response
+    // b. handle tunnel response
     const res = httpParse(buf);
     if(res.statusCode!=='101') {
-      return proxy.emit('error', `bad token for ${channel}`);
+      return tcon.emit('error', `bad token for ${channel}`);
     }
     console.log(`${px} subscribed to ${channel}`);
     bufs.push(res.buffer.slice(res.length));
@@ -428,10 +428,10 @@ function Client(px, o) {
     console.error(`${px}`, err);
     client.close();
   });
-  // 10. closed? report and close proxy, sockets
+  // 10. closed? report and close tunnel conn, sockets
   client.on('close', () => {
     console.log(`${px} closed`);
-    if(!proxy.destroyed) proxy.destroy();
+    if(!tcon.destroyed) tcon.destroy();
   });
   // 11. listening? report
   client.on('listening', () => {
@@ -443,7 +443,7 @@ function Client(px, o) {
     // a. report connection
     const id = idn++;
     sockets.set(id, soc);
-    proxy.write(packetWrite('c+', 0, id));
+    tcon.write(packetWrite('c+', 0, id));
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
@@ -453,11 +453,11 @@ function Client(px, o) {
     // c. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
-      if(sockets.delete(id)) proxy.write(packetWrite('c-', 0, id));
+      if(sockets.delete(id)) tcon.write(packetWrite('c-', 0, id));
     });
     // d. data? handle it
     soc.on('data', (buf) => {
-      proxy.write(packetWrite('d+', 0, id, buf));
+      tcon.write(packetWrite('d+', 0, id, buf));
     });
   });
 };
