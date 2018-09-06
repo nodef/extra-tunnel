@@ -5,8 +5,8 @@ const cp = require('child_process');
 const fs = require('fs');
 
 // I. global variables
-const USERAGENT_SERVER = 'rhost/server';
-const USERAGENT_CLIENT = 'rhost/client';
+const USERAGENT_SERVER = 'tunnel/server';
+const USERAGENT_CLIENT = 'tunnel/client';
 const BUFFER_EMPTY = Buffer.alloc(0);
 const encode = encodeURIComponent;
 const decode = decodeURIComponent;
