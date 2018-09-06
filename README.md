@@ -14,6 +14,8 @@
   </a>
 </p>
 
+> NOTE: [rhost] is now updated to [extra-tunnel].
+
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
 **locally**, through a *public-ip proxy server*, which can be hosted on a
@@ -229,3 +231,4 @@ Get Professional icons from: [Icon Experience]<br>
 [Taag]: http://patorjk.com/software/taag
 [Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 [Icon Experience]: https://www.iconexperience.com
+[extra-tunnel]: https://www.npmjs.com/package/extra-tunnel
