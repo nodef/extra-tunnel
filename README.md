@@ -1,20 +1,4 @@
-<b align="center">
-<pre>
-.______       __    __    ______        _______.___________.
-|   _  \     |  |  |  |  /  __  \      /       |           |
-|  |_)  |    |  |__|  | |  |  |  |    |   (----`---|  |----`
-|      /     |   __   | |  |  |  |     \   \       |  |     
-|  |\  \----.|  |  |  | |  `--'  | .----)   |      |  |     
-| _| `._____||__|  |__|  \______/  |_______/       |__|     
-</pre>
-</b>
-<p align="center">
-  <a href="https://nodei.co/npm/rhost/">
-    <img alt="NPM" src="https://nodei.co/npm/rhost.png">
-  </a>
-</p>
-
-> **NOTE**: [rhost] is now updated to [extra-tunnel].
+Tunnel web server from private IP.
 
 A proxying system, where the *proxy* acts both as a *middle-man* and an
 *HTTP server*. This enables *users* to access an HTTP server running
@@ -231,4 +215,3 @@ Get Professional icons from: [Icon Experience]<br>
 [Taag]: http://patorjk.com/software/taag
 [Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 [Icon Experience]: https://www.iconexperience.com
-[extra-tunnel]: https://www.npmjs.com/package/extra-tunnel
