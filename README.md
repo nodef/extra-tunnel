@@ -198,9 +198,8 @@ rhost.<Mode>([<prefix>], [<options>]);
 ![Cartoon](http://oi63.tinypic.com/2uqm5bl.jpg)
 [![Merferry](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
 
-> Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];<br>
-> Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];<br>
-> Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
+> Listen: [Epic Mountain]; Inspiration: [Samy Kamkar]; Docs: [Net Node.js]; Play: [Scrap Mechanic];<br>
+> ASCII art: [Taag]; Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
 
 [Epic Mountain]:https://soundcloud.com/epicmountain
 [Samy Kamkar]: https://samy.pl
