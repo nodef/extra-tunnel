@@ -17,8 +17,6 @@ multiple *classrooms*. Each *channel* has a *Server*, like each classroom has a
 *class teacher*.. Any number of *Clients* can connect to a *channel* and send
 requests to the *Server*, and so can any number of *students* in a *classroom*
 ask questions to their *class teacher*.
-
-![rhost](http://oi63.tinypic.com/2uqm5bl.jpg)
 <br><br>
 
 
@@ -136,6 +134,11 @@ to *channel* `/`, but this is **unnecessary** since you can directly request
 the *Proxy* server instead.
 <br><br>
 
+[GitHub]: https://github.com
+[Heroku]: https://www.heroku.com
+[rhost]: https://github.com/nodef/rhost
+[Heroku dashboard]: https://dashboard.heroku.com/apps
+
 
 ## Reference
 
@@ -206,8 +209,5 @@ Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
 [Markdown Cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 [Icon Experience]: https://www.iconexperience.com
 
-
-[GitHub]: https://github.com
-[Heroku]: https://www.heroku.com
-[rhost]: https://github.com/nodef/rhost
-[Heroku dashboard]: https://dashboard.heroku.com/apps
+![Cartoon](http://oi63.tinypic.com/2uqm5bl.jpg)
+[![Merferry](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
