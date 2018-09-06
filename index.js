@@ -352,21 +352,21 @@ function Server(px, opt) {
 
 
 // IV. client constructor
-function Client(px, opt) {
+function Client(px, o) {
   // 1. setup defaults
   px = px||'client';
-  opt = opt||{};
-  opt.proxy = opt.proxy||'localhost';
-  opt.client = opt.client||'localhost:82';
-  opt.channel = opt.channel||'/';
-  opt.token = opt.token||'';
-  opt.ping = opt.ping||8000;
+  o = o||{};
+  o.proxy = o.proxy||'localhost';
+  o.client = o.client||'localhost:82';
+  o.channel = o.channel||'/';
+  o.token = o.token||'';
+  o.ping = o.ping||8000;
   // 2. setup client
-  const purl = urlParse(opt.proxy);
-  const curl = urlParse(opt.client);
+  const purl = urlParse(o.proxy);
+  const curl = urlParse(o.client);
   const proxy = net.createConnection(purl.port, purl.hostname);
   const client = net.createServer();
-  const channel = opt.channel;
+  const channel = o.channel;
   const sockets = new Map();
   client.listen(curl.port);
   var bufs = [], bsz = 0;
@@ -376,17 +376,17 @@ function Client(px, opt) {
     // a. send a ping packet
     if(proxy.destroyed) return;
     proxy.write(packetWrite('pi', 0, 0));
-    setTimeout(proxyPing, opt.ping);
+    setTimeout(proxyPing, o.ping);
   };
 
   // 3. register as client
   proxy.write(tokenReq({
     'url': channel,
     'host': purl.hostname,
-    'auth': USERAGENT_CLIENT+' '+encode(opt.token)
+    'auth': USERAGENT_CLIENT+' '+encode(o.token)
   }));
   // 4. try to keep connection alive
-  setTimeout(proxyPing, opt.ping);
+  setTimeout(proxyPing, o.ping);
   // 5. error? report
   proxy.on('error', (err) => {
     console.error(`${px}`, err);
@@ -401,7 +401,7 @@ function Client(px, opt) {
   });
   // 7. connected? report
   proxy.on('connect', () => {
-    console.log(`${px} connected to ${opt.proxy}`);
+    console.log(`${px} connected to ${o.proxy}`);
   });
   // 8. data? handle it
   proxy.on('data', (buf) => {
