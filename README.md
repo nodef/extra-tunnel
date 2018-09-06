@@ -194,9 +194,9 @@ rhost.<Mode>([<prefix>], [<options>]);
 
 ## Bookmarks
 
-Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];
-Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];
-Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]
+Listen: [Epic Mountain]; Inspiration: [Samy Kamkar];<br>
+Docs: [Net Node.js]; Play: [Scrap Mechanic]; ASCII art: [Taag];<br>
+Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
 
 [Epic Mountain]:https://soundcloud.com/epicmountain
 [Samy Kamkar]: https://samy.pl
