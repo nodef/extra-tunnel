@@ -1,6 +1,6 @@
 {
   "name": "extra-tunnel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tunnel web server from private IP.",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,8 @@
     "web",
     "server",
     "private",
-    "ip"
+    "ip",
+    "merferry"
   ],
   "author": "wolfram77@gmail.com",
   "license": "MIT",
