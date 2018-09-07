@@ -81,7 +81,7 @@ up a *Server*, which acts as a bridge between your local server `localhost:22`
 and the *Tunnel* `tunnelwebapp`, on *channel* `/ssh`.
 
 ```bash
-etunnel server -p tunnelwebapp.herokuapp.com -s 22 --channel /ssh --key admin
+etunnel server -t tunnelwebapp.herokuapp.com -s 22 --channel /ssh --key admin
 ```
 
 The common use of SSH is to access the terminal of a remote computer. In our
@@ -96,7 +96,7 @@ the command `npm install -g extra-tunnel`, and then start *Client* using the fol
 command:
 
 ```bash
-etunnel client -p tunnelwebapp.herokuapp.com -c 22 -n /ssh
+etunnel client -t tunnelwebapp.herokuapp.com -c 22 -n /ssh
 ```
 <br><br>
 
@@ -148,12 +148,12 @@ the *Tunnel* server instead.
 $ etunnel [<mode>] [options]
 
 # mode: this is 'tunnel', 'server', or 'client'
-# -p | --tunnel: address of tunnel
+# -t | --tunnel: address of tunnel
 # -s | --server: address of server
 # -c | --client: address of client
 # -n | --channel: channel to register/subscribe
 # -k | --key: key for registering server
-# -t | --token: token for subscribing client
+# -o | --token: token for subscribing client
 # -i | --ping: ping period to Tunnel
 # -e | --keys: JSON object with keys of channels
 # --keys_ch1: key for channel /ch1
