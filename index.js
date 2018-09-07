@@ -1,3 +1,4 @@
+const cp = require('child_process');
 const url = require('url');
 const net = require('net');
 const fs = require('fs');
@@ -490,12 +491,12 @@ if(require.main===module) {
   // 3. get options from args
   for(var i=2, I=A.length; i<I; i++) {
     if(!A[i].startsWith('-')) mode = A[i].toLowerCase();
-    else if(A[i]==='--tunnel' || A[i]==='-p') o.tunnel = A[++i];
+    else if(A[i]==='--tunnel' || A[i]==='-t') o.tunnel = A[++i];
     else if(A[i]==='--server' || A[i]==='-s') o.server = A[++i];
     else if(A[i]==='--client' || A[i]==='-c') o.client = A[++i];
     else if(A[i]==='--channel' || A[i]==='-n') o.channel = A[++i];
     else if(A[i]==='--key' || A[i]==='-k') o.key = A[++i];
-    else if(A[i]==='--token' || A[i]==='-t') o.token = A[++i];
+    else if(A[i]==='--token' || A[i]==='-o') o.token = A[++i];
     else if(A[i]==='--ping' || A[i]==='-i') o.ping = parseInt(A[++i], 10);
     else if(A[i]==='--keys' || A[i]==='-e') o.keys = JSON.parse(A[++i]);
     else if(A[i].startsWith('--keys_')) {
