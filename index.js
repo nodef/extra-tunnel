@@ -105,7 +105,7 @@ function Tunnel(px, o) {
   // 1. setup defaults
   px = px||'tunnel';
   o = o||{};
-  o.tunnel = o.tunnel||'localhost';
+  o.tunnel = o.tunnel||'localhost:7000';
   o.keys = o.keys||{};
   o.keys['/'] = o.keys['/']||'';
   // 2. setup tunnel
@@ -262,8 +262,8 @@ function Server(px, o) {
   // 1. setup defaults
   px = px||'server';
   o = o||{};
-  o.tunnel = o.tunnel||'localhost';
-  o.server = o.server||'localhost:81';
+  o.tunnel = o.tunnel||'localhost:7000';
+  o.server = o.server||'localhost:7001';
   o.channel = o.channel||'/';
   o.key = o.key||'';
   o.token = o.token||'';
@@ -357,8 +357,8 @@ function Client(px, o) {
   // 1. setup defaults
   px = px||'client';
   o = o||{};
-  o.tunnel = o.tunnel||'localhost';
-  o.client = o.client||'localhost:82';
+  o.tunnel = o.tunnel||'localhost:7000';
+  o.client = o.client||'localhost:7002';
   o.channel = o.channel||'/';
   o.token = o.token||'';
   o.ping = o.ping||8000;

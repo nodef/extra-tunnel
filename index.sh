@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # present script directory
 psd() {
   z="${BASH_SOURCE[0]}"

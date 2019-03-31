@@ -61,7 +61,7 @@ Try opening `https://tunnelwebapp.herokuapp.com` in your browser, after running
 this command.
 
 ```bash
-etunnel server --tunnel tunnelwebapp.herokuapp.com --server 80
+etunnel server --tunnel tunnelwebapp.herokuapp.com --server 90
 ```
 
 ### Host local SSH server
@@ -183,9 +183,9 @@ Tunnel([<prefix>], [<options>]);
 Tunnel.<Server/Client>([<prefix>], [<options>]);
 // prefix: name of object in logs
 // the following options are accepted (object)
-// tunnel: address of tunnel ('localhost')
-// server: address of server ('localhost:81')
-// client: address of client ('localhost:82')
+// tunnel: address of tunnel ('localhost:7000')
+// server: address of server ('localhost:7001')
+// client: address of client ('localhost:7002')
 // channel: channel to register/subscribe ('/')
 // key: key for registering server ('')
 // token: token for subscribing client ('')

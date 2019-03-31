@@ -1,6 +1,6 @@
 {
   "name": "extra-tunnel",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Tunnel web server from private IP.",
   "main": "index.js",
   "scripts": {
