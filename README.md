@@ -61,7 +61,7 @@ Try opening `https://tunnelwebapp.herokuapp.com` in your browser, after running
 this command.
 
 ```bash
-etunnel server --tunnel tunnelwebapp.herokuapp.com --server 90
+etunnel server --tunnel tunnelwebapp.herokuapp.com --server 80
 ```
 
 ### Host local SSH server
