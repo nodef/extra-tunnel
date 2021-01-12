@@ -86,7 +86,7 @@ function packetRead(bsz, bufs, buf, fn) {
   return bsz;
 };
 
-function packetWrite(on, set, tag, body) {
+function packetCreate(on, set, tag, body) {
   // 1. allocate buffer
   body = body||BUFFER_EMPTY;
   const buf = Buffer.allocUnsafe(12+body.length);
@@ -98,6 +98,14 @@ function packetWrite(on, set, tag, body) {
   body.copy(buf, 12);
   return buf;
 };
+
+function packetWrite(soc, on, set, tag, body) {
+  body = body||BUFFER_EMPTY;
+  if (body.length <= 32768) return soc.write(packetCreate(on, set, tag, body));
+  var p1 = soc.write(packetCreate(on, set, tag, body.slice(0, 32768)));
+  var p2 = soc.write(packetCreate(on, set, tag, body.slice(32768)));
+  return p1 && p2;
+}
 
 
 // II. tunnel constructor
@@ -123,14 +131,14 @@ function Tunnel(px, o) {
   function channelWrite(id, on, set, tag, body) {
     // a. write to channel, if exists
     const soc = sockets.get(channels.get(id));
-    if(soc) return soc.write(packetWrite(on, set, tag, body));
+    if(soc) return packetWrite(soc, on, set, tag, body);
   };
 
   function clientWrite(on, set, tag, body) {
     // a. write to other/root client
     const soc = sockets.get(set? set : tag);
     if(!soc) return;
-    if(set) return soc.write(packetWrite(on, 0, tag, body));
+    if(set) return packetWrite(soc, on, 0, tag, body);
     if(on==='d+') return soc.write(body);
     if(sockets.delete(tag)) soc.destroy();
   };
@@ -160,7 +168,7 @@ function Tunnel(px, o) {
     // e. data? write to client
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-        if(on==='pi') return soc.write(packetWrite('po', 0, 0));
+        if(on==='pi') return packetWrite(soc, 'po', 0, 0);
         if(clients.get(set)===chn) clientWrite(on, set, tag, body);
       });
     });
@@ -184,7 +192,7 @@ function Tunnel(px, o) {
     // e. data? write to channel
     soc.on('data', (buf) => {
       bsz = packetRead(bsz, bufs, buf, (on, set, tag, body) => {
-        if(on==='pi') return soc.write(packetWrite('po', 0, 0));
+        if(on==='pi') return packetWrite(soc, 'po', 0, 0);
         channelWrite(chn, on, id, tag, body);
       });
     });
@@ -291,18 +299,18 @@ function Server(px, o) {
     // c. closed? report
     soc.on('close', () => {
       console.log(`${px}:${set}.${tag} closed`);
-      if(sockets.has(tag)) tcon.write(packetWrite('c-', set, tag));
+      if(sockets.has(tag)) packetWrite(tcon, 'c-', set, tag);
     });
     // d. data? handle it
     soc.on('data', (buf) => {
-      tcon.write(packetWrite('d+', set, tag, buf));
+      packetWrite(tcon, 'd+', set, tag, buf);
     });
   };
 
   function tconPing() {
     // a. send a ping packet
     if(tcon.destroyed) return;
-    tcon.write(packetWrite('pi', 0, 0));
+    packetWrite(tcon, 'pi', 0, 0);
     setTimeout(tconPing, o.ping);
   };
 
@@ -376,7 +384,7 @@ function Client(px, o) {
   function tconPing() {
     // a. send a ping packet
     if(tcon.destroyed) return;
-    tcon.write(packetWrite('pi', 0, 0));
+    packetWrite(tcon, 'pi', 0, 0);
     setTimeout(tconPing, o.ping);
   };
 
@@ -444,7 +452,7 @@ function Client(px, o) {
     // a. report connection
     const id = idn++;
     sockets.set(id, soc);
-    tcon.write(packetWrite('c+', 0, id));
+    packetWrite(tcon, 'c+', 0, id);
     console.log(`${px}:${id} connected`);
     // b. error? report
     soc.on('error', (err) => {
@@ -454,11 +462,11 @@ function Client(px, o) {
     // c. closed? delete
     soc.on('close', () => {
       console.log(`${px}:${id} closed`);
-      if(sockets.delete(id)) tcon.write(packetWrite('c-', 0, id));
+      if(sockets.delete(id)) packetWrite(tcon, 'c-', 0, id);
     });
     // d. data? handle it
     soc.on('data', (buf) => {
-      tcon.write(packetWrite('d+', 0, id, buf));
+      packetWrite(tcon, 'd+', 0, id, buf);
     });
   });
 };
