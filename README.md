@@ -195,8 +195,8 @@ Tunnel.<Server/Client>([<prefix>], [<options>]);
 <br><br>
 
 
-![Cartoon](http://oi63.tinypic.com/2uqm5bl.jpg)
-[![Merferry](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
+![](https://i.imgur.com/2u9XcjX.jpg)
+[![](https://i.imgur.com/wOgtZvg.jpg)](https://merferry.github.io)
 
 > Listen: [Epic Mountain]; Inspiration: [Samy Kamkar]; Docs: [Net Node.js]; Play: [Scrap Mechanic];<br>
 > ASCII art: [Taag]; Reference: [Markdown Cheatsheet]; Prof. icons: [Icon Experience]<br>
