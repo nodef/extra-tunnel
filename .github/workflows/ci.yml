@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '!*'  # Do not execute on tags
+env:
+  NAME:  ${{vars.NAME}}
+  EMAIL: ${{vars.EMAIL}}
+  NPM_TOKEN:    ${{secrets.NPM_TOKEN}}
+  GITHUB_TOKEN: ${{secrets.GH_TOKEN}}
+  FORCE_COLOR: 1
+
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macOS-latest]
+    name: Test on ${{matrix.platform}}
+    runs-on: ${{matrix.platform}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno test --allow-read
+
+
+  publish-jsr:
+    name: Publish packages
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - uses: nodef/npm-config.action@v1.2.0
+        with:
+          credentials: auto
+      - run: npx jsr publish
+      - run: deno -A build.ts --publish-core
